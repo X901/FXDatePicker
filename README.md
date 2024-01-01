@@ -43,7 +43,11 @@ let specialDates: [SpecialDate] = [
 ]
 ```
 
-to add image use :
+In the above example, an airplane departure symbol in blue color will appear on 2nd January 2024.
+
+### Adding Images to Dates
+To use a custom image for marking a specific date, set dateType to .image and provide the date and image name:
+
 
 ```swift
         SpecialDate(dateType: .image(ImageType(dateString: "13/1/2024", imageName: "home"))
