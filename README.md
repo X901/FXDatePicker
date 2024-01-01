@@ -27,6 +27,28 @@
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
 ```
 
+## Using `specialDates` to Add Custom Markers
+
+The `specialDates` array allows you to add custom markers to specific dates in your calendar. You can use either custom images or SF Symbols to highlight these dates. Each special date is defined with its type (`SpecialDateType`), which can be an `ImageType` for images or an `SFSymbolsType` for SF Symbols. Format the dates in the "Day/Month/Year" format.
+
+### Adding SF Symbols to Dates
+
+To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
+
+```swift
+let specialDates: [SpecialDate] = [
+    SpecialDate(dateType: .sfSymbols(SFSymbolsType(dateString: "2/1/2024", 
+                                                   imageName: "airplane.departure", 
+                                                   color: .blue)))
+]
+```
+
+to add image use :
+
+```swift
+        SpecialDate(dateType: .image(ImageType(dateString: "13/1/2024", imageName: "home"))
+```
+
 # Customize | Available modifiers:
 
 ### calenderType 
