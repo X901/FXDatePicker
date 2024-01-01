@@ -31,7 +31,7 @@ public struct FXDatePickerView: View {
             return calendar
         }
     }
-    
+     
     public var body: some View {
         VStack {
             HStack {

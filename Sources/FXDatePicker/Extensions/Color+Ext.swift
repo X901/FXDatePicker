@@ -9,11 +9,11 @@
 import SwiftUI
 
 public extension Color {
-    init(color: UIColor) {
+    init(UIcolor: UIColor) {
         if #available(iOS 15.0, *) {
-            self.init(uiColor: color)
+            self.init(uiColor: UIcolor)
         } else {
-            let ciColor = CIColor(color: color)
+            let ciColor = CIColor(color: UIcolor)
             self.init(red: Double(ciColor.red), green: Double(ciColor.green), blue: Double(ciColor.blue), opacity: Double(ciColor.alpha))
         }
     }

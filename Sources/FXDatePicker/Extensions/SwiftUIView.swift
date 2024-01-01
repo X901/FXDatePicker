@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
     @ViewBuilder func toBold(_ condition: Bool = true) -> some View {
         if condition {
             if #available(iOS 16.0, *) {
