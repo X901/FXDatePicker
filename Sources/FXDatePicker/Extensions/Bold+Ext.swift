@@ -17,6 +17,8 @@ public extension View {
                 // Alternative for older versions
                 self.font(Font.body.bold())
             }
+        } else {
+             self
         }
     }
 }
