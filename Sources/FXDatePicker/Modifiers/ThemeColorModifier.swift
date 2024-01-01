@@ -51,11 +51,11 @@ public extension DatePickerTheme {
         public let backgroundColor: Color
         
         public init(accentColor: Color = .blue,
-                    monthTitle: Color = Color(UIcolor: .label),
+                    monthTitle: Color = Color(uiColor: .label),
                     daysName: Color = .gray,
-                    daysNumbers: Color = Color(UIcolor:  .label),
+                    daysNumbers: Color = Color(uiColor:  .label),
                     previousDaysNumber: Color = .gray,
-                    backgroundColor: Color = Color(UIcolor: .systemBackground)) {
+                    backgroundColor: Color = Color(uiColor: .systemBackground)) {
             
             self.accentColor = accentColor
             self.monthTitle = monthTitle

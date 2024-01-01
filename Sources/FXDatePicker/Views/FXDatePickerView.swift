@@ -32,7 +32,7 @@ public struct FXDatePickerView: View {
         }
     }
     
-    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
+     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
     }
