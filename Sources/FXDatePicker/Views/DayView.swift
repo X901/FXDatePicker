@@ -25,11 +25,7 @@ public struct DayView: View {
         VStack(spacing: 0) {
             if let date = date {
                 Text(dayFormatter.string(from: date))
-                    .foregroundColor(isSelected ?
-                                     (isToday ? .white : theme.main.accentColor) : 
-                                        (isBeforeToday ? theme.main.previousDaysNumber :
-                                            (isToday ? theme.main.accentColor :
-                                                theme.main.daysNumbers)))
+                    .foregroundColor(isSelected ? (isToday ? .white : theme.main.accentColor) : (isBeforeToday ? theme.main.previousDaysNumber :(isToday ? theme.main.accentColor : theme.main.daysNumbers)))
                     .font(.system(size: 20))
                     .toBold(isSelected || isToday)
                     .frame(width: 30, height: 30)

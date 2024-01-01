@@ -41,7 +41,7 @@ public struct FXDatePickerView: View {
         VStack {
             HStack {
                 Text(getMonthName(from: displayedMonth))
-                    .bold()
+                    .toBold()
                     .foregroundColor(theme.main.monthTitle)
                 
                 Spacer()
@@ -55,7 +55,6 @@ public struct FXDatePickerView: View {
                 
                 Button(action: { changeMonth(by: -1) }) {
                     Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
-                    
                         .toBold()
                         .foregroundColor(theme.main.accentColor)
                 }
