@@ -84,6 +84,8 @@ backgroundColor: Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alph
 ```
 The default theme has a white background with a blue accent color.
 
+## Installation
+
 ### [Swift Package Manager](https://swift.org/package-manager/)
 
 ```swift
