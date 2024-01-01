@@ -31,6 +31,11 @@ public struct FXDatePickerView: View {
             return calendar
         }
     }
+    
+    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
+        self._selectedDate = selectedDate
+        self.specialDates = specialDates
+    }
      
     public var body: some View {
         VStack {

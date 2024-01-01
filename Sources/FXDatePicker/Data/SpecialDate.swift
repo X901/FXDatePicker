@@ -11,6 +11,10 @@ import SwiftUI
 
 public struct SpecialDate {
     var dateType: SpecialDateType
+    
+    public init(dateType: SpecialDateType) {
+        self.dateType = dateType
+    }
 }
 
 public enum SpecialDateType {
@@ -21,10 +25,21 @@ public enum SpecialDateType {
 public struct ImageType {
     var dateString: String
     var imageName: String
+    
+   public init(dateString: String, imageName: String) {
+        self.dateString = dateString
+        self.imageName = imageName
+    }
 }
 
 public struct SFSymbolsType {
     var dateString: String
     var imageName: String
     var color: Color
+    
+   public init(dateString: String, imageName: String, color: Color) {
+        self.dateString = dateString
+        self.imageName = imageName
+        self.color = color
+    }
 }
