@@ -84,4 +84,17 @@ backgroundColor: Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alph
 ```
 The default theme has a white background with a blue accent color.
 
+### [Swift Package Manager](https://swift.org/package-manager/)
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/X901/FXDatePicker.git")
+]
+```
+
+
+## Requirements
+
+* iOS 15+
+* Xcode 13+ 
 
