@@ -45,8 +45,7 @@ color: .blue)))
 In the above example, an airplane departure symbol in blue color will appear on 2nd January 2024.
 
 ### Adding Images to Dates
-To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateString` and `dateType` set to `.sfSymbols`. Specify the date, the SF Symbol's name, and its color:
-
+For a custom image, set dateType to .image and provide the date along with the name of the image:
 
 ```swift
      SpecialDate(dateString: "13/1/2024",
@@ -56,9 +55,6 @@ To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateStri
 # Customize | Available modifiers:
 
 ### calenderType 
-
-For a custom image, set dateType to .image and provide the date along with the name of the image:
-
 
 ```swift
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
