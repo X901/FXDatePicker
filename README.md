@@ -85,6 +85,26 @@ backgroundColor: Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alph
 ```
 The default theme has a white background with a blue accent color.
 
+### hideMarkers
+
+The `hideMarkers()` modifier allows you to use the `FXDatePickerView` as a regular calendar without displaying any special date markers. This is particularly useful if you want a cleaner look or if the special date indicators are not needed for certain use cases.
+
+Example
+To apply this modifier, simply chain `.hideMarkers()` to your `FXDatePickerView` instance. Here’s how you can do it:
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+    .hideMarkers()
+```
+
+Here's how it looks with the hideMarkers() modifier applied:
+
+
+<img src="https://github.com/X901/FXDatePicker/assets/16876982/49d39bf9-9379-487b-8b2e-a0447d4bb48a" height="350">
+
+
+With this modifier, the FXDatePickerView will render without showing any markers associated with the specialDates. This keeps the calendar view simple and focused on basic date picking functionality.
+
 ## Installation
 
 ### [Swift Package Manager](https://swift.org/package-manager/)
