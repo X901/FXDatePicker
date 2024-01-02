@@ -34,6 +34,7 @@ public struct FXDatePickerView: View {
         }
     }
     
+    
      public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
@@ -48,14 +49,14 @@ public struct FXDatePickerView: View {
                 
                 Spacer()
                 
-                Button(action: { changeMonth(by: 1) }) {
+                Button(action: { changeMonth(by: -1) }) {
                     Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
                         .toBold()
                         .foregroundColor(theme.main.accentColor)
                 }
                 .padding(.horizontal)
                 
-                Button(action: { changeMonth(by: -1) }) {
+                Button(action: { changeMonth(by: 1) }) {
                     Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
                         .toBold()
                         .foregroundColor(theme.main.accentColor)

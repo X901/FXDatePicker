@@ -52,7 +52,7 @@ public struct DayView: View {
             }
             .frame(height: imageSize)
         }
-        .frame(height: hideMarkers == false ? 70 : 40) // height for DayView
+        .frame(height: hideMarkers == false ? 50  : 40) 
     }
     
     @ViewBuilder func specialDateImage(_ specialDate: SpecialDate) -> some View {
