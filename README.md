@@ -33,31 +33,28 @@ The `specialDates` array allows you to add custom markers to specific dates in y
 
 ### Adding SF Symbols to Dates
 
-To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
+To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateString` and `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
 
 ```swift
-let specialDates: [SpecialDate] = [
-    SpecialDate(dateType: .sfSymbols(SFSymbolsType(dateString: "2/1/2024", 
-                                                   imageName: "airplane.departure", 
-                                                   color: .blue)))
+SpecialDate(dateString: "2/1/2024", 
+dateType: .sfSymbols(SFSymbolsType(imageName: "airplane.departure",
+color: .blue)))
 ]
 ```
 
 In the above example, an airplane departure symbol in blue color will appear on 2nd January 2024.
 
 ### Adding Images to Dates
-To use a custom image for marking a specific date, set dateType to .image and provide the date and image name:
-
+For a custom image, set dateType to .image and provide the date along with the name of the image:
 
 ```swift
-        SpecialDate(dateType: .image(ImageType(dateString: "13/1/2024", imageName: "home"))
+     SpecialDate(dateString: "13/1/2024",
+     dateType: .image(ImageType(imageName: "home")))
 ```
 
 # Customize | Available modifiers:
 
 ### calenderType 
-
-Change the DatePicker type using calendarType. For example, to use the Hijri calendar:
 
 ```swift
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
@@ -83,6 +80,26 @@ backgroundColor: Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alph
  )
 ```
 The default theme has a white background with a blue accent color.
+
+### hideMarkers
+
+The `hideMarkers()` modifier allows you to use the `FXDatePickerView` as a regular calendar without displaying any special date markers. This is particularly useful if you want a cleaner look or if the special date indicators are not needed for certain use cases.
+
+Example
+To apply this modifier, simply chain `.hideMarkers()` to your `FXDatePickerView` instance. Here’s how you can do it:
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+    .hideMarkers()
+```
+
+Here's how it looks with the hideMarkers() modifier applied:
+
+
+<img src="https://github.com/X901/FXDatePicker/assets/16876982/49d39bf9-9379-487b-8b2e-a0447d4bb48a" height="350">
+
+
+With this modifier, the FXDatePickerView will render without showing any markers associated with the specialDates. This keeps the calendar view simple and focused on basic date picking functionality.
 
 ## Installation
 

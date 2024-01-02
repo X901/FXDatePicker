@@ -17,6 +17,8 @@ public struct FXDatePickerView: View {
     @Environment(\.calenderType) private var calenderType
     @Environment(\.layoutDirection) private var layoutDirection
     
+    private var hideMarkers: Bool = false
+
     private var calendar: Calendar {
         switch calenderType {
         case .gregorian:
@@ -32,6 +34,7 @@ public struct FXDatePickerView: View {
         }
     }
     
+    
      public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
@@ -46,14 +49,14 @@ public struct FXDatePickerView: View {
                 
                 Spacer()
                 
-                Button(action: { changeMonth(by: 1) }) {
+                Button(action: { changeMonth(by: -1) }) {
                     Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
                         .toBold()
                         .foregroundColor(theme.main.accentColor)
                 }
                 .padding(.horizontal)
                 
-                Button(action: { changeMonth(by: -1) }) {
+                Button(action: { changeMonth(by: 1) }) {
                     Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
                         .toBold()
                         .foregroundColor(theme.main.accentColor)
@@ -65,7 +68,8 @@ public struct FXDatePickerView: View {
             MonthView(displayedMonth: $displayedMonth,
                       selectedDate: $selectedDate,
                       specialDates: specialDates,
-                      calendar: calendar)
+                      calendar: calendar, 
+                      hideMarkers: hideMarkers)
         }
         .padding()
         .background(theme.main.backgroundColor)
@@ -88,6 +92,16 @@ public struct FXDatePickerView: View {
         formatter.dateFormat = "MMMM yyyy"
         formatter.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
         return formatter
+    }
+    
+}
+
+public extension FXDatePickerView {
+    
+    func hideMarkers(_ show: Bool = true) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.hideMarkers = show
+        return fxDatePicker
     }
     
 }

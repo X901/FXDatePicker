@@ -19,6 +19,7 @@ public struct MonthView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     
     let calendar: Calendar
+    let hideMarkers: Bool
     
     private var firstDayOfMonth: Date {
         calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) ?? Date()
@@ -47,7 +48,16 @@ public struct MonthView: View {
         return range.count
     }
     
+    private let totalMonthViewHeight: CGFloat = 300
+    private let maxRows: Int = 6
+
+    
     public var body: some View {
+        let rowHeight: CGFloat = (hideMarkers == false) ? 50 : 45
+        let totalRowHeight = CGFloat(numberOfRows) * rowHeight
+        let totalPaddingHeight = totalMonthViewHeight - totalRowHeight
+        let paddingPerRow = totalPaddingHeight / CGFloat(maxRows - 2)
+
         VStack {
             HStack {
                 ForEach(daysOfWeek, id: \.self) { day in
@@ -58,11 +68,12 @@ public struct MonthView: View {
                 }
             }
             
-            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 7)) {
+            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 7), spacing: paddingPerRow) {
                 ForEach(0..<(numberOfRows * 7), id: \.self) { index in
                     gridCellView(at: index)
                 }
             }
+            .frame(height: totalMonthViewHeight)
         }
     }
     
@@ -79,6 +90,7 @@ public struct MonthView: View {
                     isBeforeToday: isDateBeforeToday(date: date),
                     isToday: isToday(date: date),
                     specialDate: specialDate,
+                    hideMarkers: hideMarkers,
                     calendar: calendar)
             .onTapGesture { self.selectedDate = date }
         }
