@@ -1,5 +1,5 @@
 
-![fxPickerImage](https://github.com/X901/FXDatePicker/assets/16876982/ba3f90d0-a609-47d1-8f38-0d59561620d6)
+![FXDatePickerImage](https://github.com/X901/FXDatePicker/assets/16876982/b63eeab8-fc69-4f8f-b94f-459539f4b1cf)
 
 <p><h1 align="left">FXDatePicker</h1></p>
 
