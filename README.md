@@ -36,10 +36,9 @@ The `specialDates` array allows you to add custom markers to specific dates in y
 To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
 
 ```swift
-let specialDates: [SpecialDate] = [
-    SpecialDate(dateType: .sfSymbols(SFSymbolsType(dateString: "2/1/2024", 
-                                                   imageName: "airplane.departure", 
-                                                   color: .blue)))
+SpecialDate(dateString: "2/1/2024", 
+dateType: .sfSymbols(SFSymbolsType(imageName: "airplane.departure",
+color: .blue)))
 ]
 ```
 
@@ -50,7 +49,8 @@ To use a custom image for marking a specific date, set dateType to .image and pr
 
 
 ```swift
-        SpecialDate(dateType: .image(ImageType(dateString: "13/1/2024", imageName: "home"))
+     SpecialDate(dateString: "13/1/2024",
+     dateType: .image(ImageType(imageName: "home")))
 ```
 
 # Customize | Available modifiers:
