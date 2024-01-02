@@ -1,0 +1,40 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "Gregorian" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ميلادي"
+          }
+        }
+      }
+    },
+    "Hijri" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هجري"
+          }
+        }
+      }
+    },
+    "This is Custom DatePicker" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هذا تقويم مخصص"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

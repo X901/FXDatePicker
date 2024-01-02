@@ -1,6 +1,6 @@
 ////
 //MonthView.swift
-//DatePickerExample
+//FXDatePicker
 //
 //Created by Basel Baragabah on 01/01/2024.
 //Copyright © 2024 Basel Baragabah. All rights reserved.

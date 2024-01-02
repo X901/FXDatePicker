@@ -1,6 +1,6 @@
 ////
 //CustomHijriDatePickerView.swift
-//DatePickerExample
+//FXDatePicker
 //
 //Created by Basel Baragabah on 31/12/2023.
 //Copyright © 2023 Basel Baragabah. All rights reserved.
