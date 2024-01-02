@@ -117,12 +117,8 @@ public struct MonthView: View {
     
     private func findSpecialDate(for date: Date) -> SpecialDate? {
         specialDates.first(where: { specialDate in
-            switch specialDate.dateType {
-            case .image(let imageType):
-                return imageType.dateString.dateFromString(calendar: calendar) == date
-            case .sfSymbols(let sfSymbolsType):
-                return sfSymbolsType.dateString.dateFromString(calendar: calendar) == date
-            }
+            
+            specialDate.dateString.dateFromString(calendar: calendar) == date
         })
     }
     

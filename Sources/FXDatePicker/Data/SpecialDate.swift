@@ -10,9 +10,11 @@ import Foundation
 import SwiftUI
 
 public struct SpecialDate {
+    var dateString: String
     var dateType: SpecialDateType
     
-    public init(dateType: SpecialDateType) {
+    public init(dateString: String, dateType: SpecialDateType) {
+        self.dateString = dateString
         self.dateType = dateType
     }
 }
@@ -23,22 +25,18 @@ public enum SpecialDateType {
 }
 
 public struct ImageType {
-    var dateString: String
     var imageName: String
     
-   public init(dateString: String, imageName: String) {
-        self.dateString = dateString
+   public init(imageName: String) {
         self.imageName = imageName
     }
 }
 
 public struct SFSymbolsType {
-    var dateString: String
     var imageName: String
     var color: Color
     
-   public init(dateString: String, imageName: String, color: Color) {
-        self.dateString = dateString
+   public init(imageName: String, color: Color) {
         self.imageName = imageName
         self.color = color
     }
