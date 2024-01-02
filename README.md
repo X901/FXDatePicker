@@ -33,7 +33,7 @@ The `specialDates` array allows you to add custom markers to specific dates in y
 
 ### Adding SF Symbols to Dates
 
-To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
+To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateString` and `dateType` set to `.sfSymbols`. Provide the date, the symbol's name, and its color:
 
 ```swift
 SpecialDate(dateString: "2/1/2024", 
@@ -45,7 +45,7 @@ color: .blue)))
 In the above example, an airplane departure symbol in blue color will appear on 2nd January 2024.
 
 ### Adding Images to Dates
-To use a custom image for marking a specific date, set dateType to .image and provide the date and image name:
+To mark a date with an SF Symbol, create a `SpecialDate` instance with `dateString` and `dateType` set to `.sfSymbols`. Specify the date, the SF Symbol's name, and its color:
 
 
 ```swift
@@ -57,7 +57,8 @@ To use a custom image for marking a specific date, set dateType to .image and pr
 
 ### calenderType 
 
-Change the DatePicker type using calendarType. For example, to use the Hijri calendar:
+For a custom image, set dateType to .image and provide the date along with the name of the image:
+
 
 ```swift
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
