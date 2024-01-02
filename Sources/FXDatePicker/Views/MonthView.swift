@@ -21,6 +21,12 @@ public struct MonthView: View {
     let calendar: Calendar
     let hideMarkers: Bool
     
+    private var totalCells: Int { 6 * 7 } // 6 rows, 7 columns
+
+    private var daysOfWeek: [String] {
+        return calendar.shortWeekdaySymbols
+    }
+    
     private var firstDayOfMonth: Date {
         calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) ?? Date()
     }
@@ -75,9 +81,10 @@ public struct MonthView: View {
             }
             .frame(height: totalMonthViewHeight)
         }
-    }
-    
-    
+    }    
+}
+
+extension MonthView {
     
     @ViewBuilder private func gridCellView(at index: Int) -> some View {
         let dayOffset = index - firstDayOfWeekInMonth
@@ -98,18 +105,8 @@ public struct MonthView: View {
             Text("").frame(height: 50)
         }
     }
-    
-    
-    
-    
-    private var daysOfWeek: [String] {
-        return calendar.shortWeekdaySymbols
-    }
-    
-    
-    
-    private var totalCells: Int { 6 * 7 } // 6 rows, 7 columns
-    
+
+        
     private func getDateFor(day: Int) -> Date {
         calendar.date(from: DateComponents(year: calendar.component(.year, from: displayedMonth), month: calendar.component(.month, from: displayedMonth), day: day))!
     }
@@ -133,5 +130,4 @@ public struct MonthView: View {
             specialDate.dateString.dateFromString(calendar: calendar) == date
         })
     }
-    
 }
