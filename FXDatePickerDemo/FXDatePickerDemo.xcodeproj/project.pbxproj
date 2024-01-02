@@ -11,7 +11,7 @@
 		FD38288A2B43DF4D001ABD51 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FD3828842B43DF4D001ABD51 /* Localizable.xcstrings */; };
 		FD38288B2B43DF4D001ABD51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD3828852B43DF4D001ABD51 /* Assets.xcassets */; };
 		FD38288C2B43DF4D001ABD51 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD3828872B43DF4D001ABD51 /* Preview Assets.xcassets */; };
-		FD38288D2B43DF4D001ABD51 /* DatePickerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3828882B43DF4D001ABD51 /* DatePickerExampleApp.swift */; };
+		FD38288D2B43DF4D001ABD51 /* FXDatePickerDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3828882B43DF4D001ABD51 /* FXDatePickerDemoApp.swift */; };
 		FD38288E2B43DF4D001ABD51 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3828892B43DF4D001ABD51 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,7 +20,7 @@
 		FD3828842B43DF4D001ABD51 /* Localizable.xcstrings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		FD3828852B43DF4D001ABD51 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD3828872B43DF4D001ABD51 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		FD3828882B43DF4D001ABD51 /* DatePickerExampleApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatePickerExampleApp.swift; sourceTree = "<group>"; };
+		FD3828882B43DF4D001ABD51 /* FXDatePickerDemoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FXDatePickerDemoApp.swift; sourceTree = "<group>"; };
 		FD3828892B43DF4D001ABD51 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FDF332632B40517400CBD190 /* FXDatePickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FXDatePickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -43,7 +43,7 @@
 				FD3828842B43DF4D001ABD51 /* Localizable.xcstrings */,
 				FD3828852B43DF4D001ABD51 /* Assets.xcassets */,
 				FD3828862B43DF4D001ABD51 /* Preview Content */,
-				FD3828882B43DF4D001ABD51 /* DatePickerExampleApp.swift */,
+				FD3828882B43DF4D001ABD51 /* FXDatePickerDemoApp.swift */,
 				FD3828892B43DF4D001ABD51 /* ContentView.swift */,
 			);
 			path = FXDatePickerDemo;
@@ -161,7 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FD38288E2B43DF4D001ABD51 /* ContentView.swift in Sources */,
-				FD38288D2B43DF4D001ABD51 /* DatePickerExampleApp.swift in Sources */,
+				FD38288D2B43DF4D001ABD51 /* FXDatePickerDemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

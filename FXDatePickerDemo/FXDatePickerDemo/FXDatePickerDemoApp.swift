@@ -9,7 +9,7 @@
 import SwiftUI
 
 @main
-struct DatePickerExampleApp: App {
+struct FXDatePickerDemoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
