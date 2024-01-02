@@ -15,6 +15,8 @@ public struct DayView: View {
     let isBeforeToday: Bool
     let isToday: Bool
     let specialDate: SpecialDate?
+    let hideMarkers: Bool
+
     private let imageSize: CGFloat = 25
     let calendar: Calendar
     
@@ -40,15 +42,17 @@ public struct DayView: View {
             
             ZStack {
                 
-                if let specialDate = specialDate {
-                    specialDateImage(specialDate)
+                if !hideMarkers {
+                    if let specialDate = specialDate {
+                        specialDateImage(specialDate)
+                    }
                 }
                 
                 Spacer()
             }
             .frame(height: imageSize)
         }
-        .frame(height: 70) // height for DayView
+        .frame(height: hideMarkers == false ? 70 : 40) // height for DayView
     }
     
     @ViewBuilder func specialDateImage(_ specialDate: SpecialDate) -> some View {

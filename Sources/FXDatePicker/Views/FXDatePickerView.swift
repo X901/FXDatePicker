@@ -17,6 +17,8 @@ public struct FXDatePickerView: View {
     @Environment(\.calenderType) private var calenderType
     @Environment(\.layoutDirection) private var layoutDirection
     
+    private var hideMarkers: Bool = false
+
     private var calendar: Calendar {
         switch calenderType {
         case .gregorian:
@@ -65,7 +67,8 @@ public struct FXDatePickerView: View {
             MonthView(displayedMonth: $displayedMonth,
                       selectedDate: $selectedDate,
                       specialDates: specialDates,
-                      calendar: calendar)
+                      calendar: calendar, 
+                      hideMarkers: hideMarkers)
         }
         .padding()
         .background(theme.main.backgroundColor)
@@ -88,6 +91,16 @@ public struct FXDatePickerView: View {
         formatter.dateFormat = "MMMM yyyy"
         formatter.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
         return formatter
+    }
+    
+}
+
+public extension FXDatePickerView {
+    
+    func hideMarkers(_ show: Bool = true) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.hideMarkers = show
+        return fxDatePicker
     }
     
 }

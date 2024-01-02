@@ -19,6 +19,7 @@ public struct MonthView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     
     let calendar: Calendar
+    let hideMarkers: Bool
     
     private var firstDayOfMonth: Date {
         calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) ?? Date()
@@ -79,6 +80,7 @@ public struct MonthView: View {
                     isBeforeToday: isDateBeforeToday(date: date),
                     isToday: isToday(date: date),
                     specialDate: specialDate,
+                    hideMarkers: hideMarkers,
                     calendar: calendar)
             .onTapGesture { self.selectedDate = date }
         }
