@@ -18,8 +18,11 @@ public struct FXDatePickerView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     
     private var hideMarkers: Bool = false
+    private var disableSwipe: Bool = false
 
     @State private var dateRange: [Date] = []
+
+    @State private var shouldUpdateView: Bool = false
 
     private var calendar: Calendar {
         switch calenderType {
@@ -68,27 +71,25 @@ public struct FXDatePickerView: View {
             .padding(.horizontal, 12)
             .frame(height: 40)
             
-            TabView(selection: $displayedMonth) {
-                ForEach(dateRange, id: \.self) { month in
-                           MonthView(displayedMonth: .constant(month),
-                                                           selectedDate: $selectedDate,
-                                                           specialDates: specialDates,
-                                                           calendar: calendar,
-                                                           hideMarkers: hideMarkers)
-                           .id(month)
-                           .onChange(of: displayedMonth) { newMonth in
-                                                  updateDateRangeIfNeeded(for: newMonth)
-                                              }
-                       }
-                   }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-                   .frame(height: 320)
-
+            SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
+                MonthView(displayedMonth: $displayedMonth,
+                          selectedDate: $selectedDate,
+                          specialDates: specialDates,
+                          calendar: calendar,
+                          hideMarkers: hideMarkers)
+            }
+            .id(shouldUpdateView)
+            .frame(height: 320)
         }
         .padding()
         .background(theme.main.backgroundColor)
         .onAppear {
             setupCurrentDate()
+        }
+        .onChange(of: displayedMonth) { newMonth in
+            print("Displayed month changed to: \(newMonth)")
+
+            updateDateRangeIfNeeded(for: newMonth)
         }
 
     }
@@ -103,44 +104,44 @@ public extension FXDatePickerView {
         return fxDatePicker
     }
     
-    private func setupCurrentDate() {
-        let currentDate = Date()
-        let startRange = calendar.date(byAdding: .year, value: -3, to: currentDate)!
-        let endRange = calendar.date(byAdding: .year, value: 3, to: currentDate)!
-        dateRange = generateMonths(start: startRange, end: endRange)
-        displayedMonth = currentDate
-
+    func disableSwipe(_ hide: Bool = true) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.disableSwipe = hide
+        return fxDatePicker
     }
     
+    
+    private func setupCurrentDate() {
+        // load 6 years when DatePicker appear
+        let startRange = calendar.date(byAdding: .year, value: -6, to: displayedMonth)!
+        let endRange = calendar.date(byAdding: .year, value: 6, to: displayedMonth)!
+        dateRange = generateMonths(start: startRange, end: endRange)
+    }
+    
+// Needed for Swipe feature to load more Months
     private func updateDateRangeIfNeeded(for month: Date) {
-        // Convert the dateRange array to a Set for efficient contains checking
-        let dateSet = Set(dateRange)
+        let monthStart = month
 
-        let monthIndex = dateRange.firstIndex(of: month) ?? 0
-        let totalMonths = dateRange.count
+        // Check and extend the end of the range
+        if let lastMonth = dateRange.last, monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth)! {
+            let newEnd = calendar.date(byAdding: .month, value: 6, to: lastMonth)!
+            let newMonths = generateMonths(start: lastMonth, end: newEnd).filter { !dateRange.contains($0) }
+            dateRange.append(contentsOf: newMonths)
+            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
+            print("Extended end of range. New range: \(dateRange)")
+            shouldUpdateView.toggle()
 
-        // Load more months at the start if near the beginning of the range
-        if monthIndex < 3 {
-            let newStart = calendar.date(byAdding: .year, value: -1, to: dateRange.first!)!
-            // Generate new months up to the day before the first month in the range
-            let newEnd = calendar.date(byAdding: .day, value: -1, to: dateRange.first!)!
-            let newMonths = generateMonths(start: newStart, end: newEnd)
-
-            // Append only new months that are not already in dateRange
-            let filteredMonths = newMonths.filter { !dateSet.contains($0) }
-            dateRange = filteredMonths + dateRange
         }
 
-        // Load more months at the end if near the end of the range
-        if monthIndex > totalMonths - 4 {
-            // Generate new months starting the day after the last month in the range
-            let newStart = calendar.date(byAdding: .day, value: 1, to: dateRange.last!)!
-            let newEnd = calendar.date(byAdding: .year, value: 1, to: dateRange.last!)!
-            let newMonths = generateMonths(start: newStart, end: newEnd)
+        // Check and extend the start of the range
+        if let firstMonth = dateRange.first, monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth)! {
+            let newStart = calendar.date(byAdding: .month, value: -6, to: firstMonth)!
+            let newMonths = generateMonths(start: newStart, end: firstMonth).filter { !dateRange.contains($0) }
+            dateRange.insert(contentsOf: newMonths, at: 0)
+            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
+            print("Extended start of range. New range: \(dateRange)")
+            shouldUpdateView.toggle()
 
-            // Append only new months that are not already in dateRange
-            let filteredMonths = newMonths.filter { !dateSet.contains($0) }
-            dateRange += filteredMonths
         }
     }
 
@@ -179,3 +180,5 @@ public extension FXDatePickerView {
     }
     
 }
+
+
