@@ -60,7 +60,7 @@ struct ContentView: View {
             switch calenderType {
             case .gregorian:
                 FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                   //.hideMarkers()
+                  // .hideMarkers()
                   // .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:

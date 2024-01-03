@@ -13,7 +13,6 @@ struct SwipeView<Content: View>: View {
     var isDisable: Bool
     @Binding var displayedMonth: Date
     @Binding var dateRange: [Date]
-    var month: Int?
     
     init(dateRange: Binding<[Date]> ,displayedMonth: Binding<Date>, isDisable: Bool, @ViewBuilder content: @escaping () -> Content) {
         self._dateRange = dateRange
@@ -26,10 +25,8 @@ struct SwipeView<Content: View>: View {
         Group {
             if isDisable == false {
                 TabView(selection: $displayedMonth) {
-                    ForEach($dateRange, id: \.self) { $month in
                         content()
-                            .tag(month)
-                    }
+                    
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 

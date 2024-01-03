@@ -72,11 +72,24 @@ public struct FXDatePickerView: View {
             .frame(height: 40)
             
             SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
-                MonthView(displayedMonth: $displayedMonth,
-                          selectedDate: $selectedDate,
-                          specialDates: specialDates,
-                          calendar: calendar,
-                          hideMarkers: hideMarkers)
+                
+                if disableSwipe {
+                    MonthView(displayedMonth: $displayedMonth,
+                              selectedDate: $selectedDate,
+                              specialDates: specialDates,
+                              calendar: calendar,
+                              hideMarkers: hideMarkers)
+                } else {
+                    ForEach($dateRange, id: \.self) { $month in
+                        MonthView(displayedMonth: $month,
+                                  selectedDate: $selectedDate,
+                                  specialDates: specialDates,
+                                  calendar: calendar,
+                                  hideMarkers: hideMarkers)
+                        .tag(month)
+                    }
+                }
+                
             }
             .id(shouldUpdateView)
             .frame(height: 320)
