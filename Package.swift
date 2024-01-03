@@ -6,7 +6,7 @@ import PackageDescription
     let package = Package(
         name: "FXDatePicker",
         platforms: [
-            .iOS(.v15) // Specifies that the package requires iOS 13.0 or newer
+            .iOS(.v14) // Specifies that the package requires iOS 13.0 or newer
         ],
         products: [
             // Products define the executables and libraries a package produces, making them visible to other packages.
