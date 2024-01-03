@@ -101,6 +101,22 @@ Here's how it looks with the hideMarkers() modifier applied:
 
 With this modifier, the FXDatePickerView will render without showing any markers associated with the specialDates. This keeps the calendar view simple and focused on basic date picking functionality.
 
+--
+
+### disableSwipe
+
+The `.disableSwipe()` modifier is used with the `FXDatePickerView` to disable the swipe gesture functionality. This can be particularly useful in scenarios where you want to prevent users from changing the date by swiping, ensuring that navigation through dates is controlled through other means (like buttons or external controls).
+
+Example
+To apply this modifier, simply chain `.disableSwipe()` to your `FXDatePickerView` instance. Here’s how you can do it:
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+    .disableSwipe()
+```
+In this example, the `FXDatePickerView` will no longer respond to swipe gestures for date navigation, and users will need to use buttons provided in the UI to change the selected date.
+
+
 ## Installation
 
 ### [Swift Package Manager](https://swift.org/package-manager/)
@@ -114,6 +130,6 @@ dependencies: [
 
 ## Requirements
 
-* iOS 15+
+* iOS 14+
 * Xcode 13+ 
 
