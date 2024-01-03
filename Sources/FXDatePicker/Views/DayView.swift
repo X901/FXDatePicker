@@ -55,6 +55,10 @@ public struct DayView: View {
         .frame(height: hideMarkers == false ? 50  : 40) 
     }
     
+}
+
+extension DayView {
+    
     @ViewBuilder func specialDateImage(_ specialDate: SpecialDate) -> some View {
         switch specialDate.dateType {
         case .image(let imageType):
@@ -79,5 +83,3 @@ public struct DayView: View {
         return formatter
     }
 }
-
-
