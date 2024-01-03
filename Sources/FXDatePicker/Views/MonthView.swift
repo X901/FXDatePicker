@@ -23,9 +23,6 @@ public struct MonthView: View {
     
     private var totalCells: Int { 6 * 7 } // 6 rows, 7 columns
 
-    private var daysOfWeek: [String] {
-        return calendar.shortWeekdaySymbols
-    }
     
     private var firstDayOfMonth: Date {
         calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) ?? Date()
@@ -64,23 +61,12 @@ public struct MonthView: View {
         let totalPaddingHeight = totalMonthViewHeight - totalRowHeight
         let paddingPerRow = totalPaddingHeight / CGFloat(maxRows - 2)
 
-        VStack {
-            HStack {
-                ForEach(daysOfWeek, id: \.self) { day in
-                    Text(day)
-                        .frame(maxWidth: .infinity)
-                        .font(.caption)
-                        .foregroundColor(theme.main.daysName)
-                }
-            }
-            
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 7), spacing: paddingPerRow) {
                 ForEach(0..<(numberOfRows * 7), id: \.self) { index in
                     gridCellView(at: index)
                 }
             }
             .frame(height: totalMonthViewHeight)
-        }
     }    
 }
 

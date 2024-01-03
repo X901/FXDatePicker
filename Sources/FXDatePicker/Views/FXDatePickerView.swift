@@ -24,6 +24,10 @@ public struct FXDatePickerView: View {
 
     @State private var shouldUpdateView: Bool = false
 
+    private var daysOfWeek: [String] {
+        return calendar.shortWeekdaySymbols
+    }
+    
     private var calendar: Calendar {
         switch calenderType {
         case .gregorian:
@@ -71,28 +75,40 @@ public struct FXDatePickerView: View {
             .padding(.horizontal, 12)
             .frame(height: 40)
             
-            SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
+            VStack {
+                HStack {
+                    ForEach(daysOfWeek, id: \.self) { day in
+                        Text(day)
+                            .frame(maxWidth: .infinity)
+                            .font(.caption)
+                            .foregroundColor(theme.main.daysName)
+                    }
+                }
                 
-                if disableSwipe {
-                    MonthView(displayedMonth: $displayedMonth,
-                              selectedDate: $selectedDate,
-                              specialDates: specialDates,
-                              calendar: calendar,
-                              hideMarkers: hideMarkers)
-                } else {
-                    ForEach($dateRange, id: \.self) { $month in
-                        MonthView(displayedMonth: $month,
+                
+                SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
+                    
+                    if disableSwipe {
+                        MonthView(displayedMonth: $displayedMonth,
                                   selectedDate: $selectedDate,
                                   specialDates: specialDates,
                                   calendar: calendar,
                                   hideMarkers: hideMarkers)
-                        .tag(month)
+                    } else {
+                        ForEach($dateRange, id: \.self) { $month in
+                            MonthView(displayedMonth: $month,
+                                      selectedDate: $selectedDate,
+                                      specialDates: specialDates,
+                                      calendar: calendar,
+                                      hideMarkers: hideMarkers)
+                            .tag(month)
+                        }
                     }
+                    
                 }
-                
+                .id(shouldUpdateView)
+                .frame(height: 320)
             }
-            .id(shouldUpdateView)
-            .frame(height: 320)
         }
         .padding()
         .background(theme.main.backgroundColor)

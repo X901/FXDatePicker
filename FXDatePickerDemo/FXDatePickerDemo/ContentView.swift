@@ -11,10 +11,10 @@ import FXDatePicker
 
 struct ContentView: View {
     
-//    init() {
-//        // Change the app language to Arabic
-//              UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
-//           }
+    init() {
+        // Change the app language to Arabic
+              UserDefaults.standard.set(["ar"], forKey: "AppleLanguages")
+           }
         
     @State private var selectedGregorianDate = Date()
     @State private var selectedHijriDate = Date()
@@ -23,7 +23,7 @@ struct ContentView: View {
         
         SpecialDate(dateString: "19/6/1445", dateType: .sfSymbols(SFSymbolsType( imageName: "figure.walk", color: .red))),
         
-        SpecialDate(dateString: "2/1/2024", dateType: .sfSymbols(SFSymbolsType( imageName: "airplane.departure", color: .blue))),
+        SpecialDate(dateString: "2/1/2024", dateType: .sfSymbols(SFSymbolsType( imageName: "airplane.departure", color: .red))),
 
         SpecialDate(dateString: "11/1/2024", dateType: .sfSymbols(SFSymbolsType(imageName: "phone.fill", color: .orange))),
 
@@ -43,7 +43,7 @@ struct ContentView: View {
     var body: some View {
         
         VStack {
-            
+                        
             Picker("", selection: $selectedCalender) {
                 Text("Gregorian").tag(0)
                 Text("Hijri").tag(1)
@@ -65,18 +65,19 @@ struct ContentView: View {
                     .calenderType(calenderType)
                     .datePickerTheme(main:
                         .init(
-                        accentColor: Color(UIColor(red: 0.23, green: 0.80, blue: 0.81, alpha: 1.00)),
+                        accentColor: Color(UIColor(red: 0.49, green: 0.76, blue: 0.96, alpha: 1.00)),
                         monthTitle: .white,
-                        daysName: Color(UIColor(red: 0.45, green: 0.48, blue: 0.48, alpha: 1.00)),
-                        daysNumbers: Color(UIColor(red: 0.83, green: 0.84, blue: 0.84, alpha: 1.00)),
-                        previousDaysNumber: Color(UIColor(red: 0.44, green: 0.47, blue: 0.47, alpha: 1.00)),
-                       backgroundColor: Color(UIColor(red: 0.22, green: 0.25, blue: 0.25, alpha: 1.00)))
+                        daysName: Color(UIColor(red: 0.96, green: 0.98, blue: 0.99, alpha: 1.00)),
+                        daysNumbers: Color(UIColor(red: 0.96, green: 0.98, blue: 0.99, alpha: 1.00)),
+                        previousDaysNumber: Color(UIColor(red: 0.19, green: 0.47, blue: 0.76, alpha: 1.00)),
+                       backgroundColor: Color(UIColor(red: 0.01, green: 0.33, blue: 0.64, alpha: 1.00)))
                        )
             case .hijri:
                 
                 FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                  // .hideMarkers()
-                    .calenderType(calenderType)          
+                   .hideMarkers()
+                   .disableSwipe()
+                    .calenderType(calenderType)
             }
             
            
