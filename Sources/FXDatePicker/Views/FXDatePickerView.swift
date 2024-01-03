@@ -87,8 +87,6 @@ public struct FXDatePickerView: View {
             setupCurrentDate()
         }
         .onChange(of: displayedMonth) { newMonth in
-            print("Displayed month changed to: \(newMonth)")
-
             updateDateRangeIfNeeded(for: newMonth)
         }
 
