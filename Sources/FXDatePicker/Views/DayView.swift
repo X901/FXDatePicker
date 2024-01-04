@@ -48,7 +48,6 @@ public struct DayView: View {
                     }
                 }
                 
-                Spacer()
             }
             .frame(height: imageSize)
         }
