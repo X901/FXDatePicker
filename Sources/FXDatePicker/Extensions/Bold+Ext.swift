@@ -12,9 +12,8 @@ public extension View {
     @ViewBuilder func toBold(_ condition: Bool = true) -> some View {
         if condition {
             if #available(iOS 16.0, *) {
-                self.bold() // New method available in iOS 16
+                self.bold()
             } else {
-                // Alternative for older versions
                 self.font(Font.body.bold())
             }
         } else {
