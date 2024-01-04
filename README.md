@@ -76,10 +76,37 @@ monthTitle: .white,
 daysName: Color(uiColor: UIColor(red: 0.45, green: 0.48, blue: 0.48, alpha: 1.00)),
 daysNumbers: Color(uiColor: UIColor(red: 0.83, green: 0.84, blue: 0.84, alpha: 1.00)),
 previousDaysNumber: Color(uiColor: UIColor(red: 0.44, green: 0.47, blue: 0.47, alpha: 1.00)),
-backgroundColor: Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alpha: 1.00)))
+backgroundStyle: .color(Color(uiColor: UIColor(red: 0.22, green: 0.25, blue: 0.25, alpha: 1.00)))
  )
 ```
-The default theme has a white background with a blue accent color.
+ `backgroundStyle` accept Color or any kind of Gradient for example using radialGradient as backgroundColor
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+            .datePickerTheme(main:
+                .init(
+                accentColor: Color(UIColor(red: 0.82, green: 0.26, blue: 0.42, alpha: 1.00)),
+                monthTitle: Color(UIColor(red: 0.86, green: 0.87, blue: 0.88, alpha: 1.00)),
+                daysName: Color(UIColor(red: 0.80, green: 0.80, blue: 0.83, alpha: 1.00)),
+                daysNumbers: Color(UIColor(red: 0.83, green: 0.83, blue: 0.87, alpha: 1.00)),
+                previousDaysNumber: Color(UIColor(red: 0.66, green: 0.66, blue: 0.69, alpha: 1.00)),
+                backgroundStyle:
+                        .radialGradient(
+                       Gradient(colors:
+                          [Color(UIColor(red: 0.19, green: 0.19, blue: 0.22, alpha: 1.00)),
+                           Color(UIColor(red: 0.11, green: 0.11, blue: 0.14, alpha: 1.00))
+                          ]
+                               ),
+                          center: .center,
+                          startRadius: 1,
+                         endRadius: 300)
+                   )
+               )
+
+```
+
+The default theme has a white background with a blue accent color. Adjust the colors or gradients according to your preference for a personalized DatePicker appearance.
+
 
 ### hideMarkers
 
@@ -101,7 +128,7 @@ Here's how it looks with the hideMarkers() modifier applied:
 
 With this modifier, the FXDatePickerView will render without showing any markers associated with the specialDates. This keeps the calendar view simple and focused on basic date picking functionality.
 
---
+
 
 ### disableSwipe
 
@@ -115,6 +142,21 @@ FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
     .disableSwipe()
 ```
 In this example, the `FXDatePickerView` will no longer respond to swipe gestures for date navigation, and users will need to use buttons provided in the UI to change the selected date.
+
+
+### hideDatePicker
+
+The `.hideDatePicker()` modifier is used with the `FXDatePickerView` to hide the change months/year using PickerView view tap on Month title.
+
+#### Example
+
+To apply this modifier, simply chain `.hideDatePicker()` to your `FXDatePickerView` instance. Here’s how you can do it:
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+    .hideDatePicker()
+```
+This modifier hides the UI elements responsible for changing months or years when tapping on the Month title within the FXDatePickerView.
 
 
 ## Installation
