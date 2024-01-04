@@ -19,7 +19,8 @@ public struct FXDatePickerView: View {
     
     private var hideMarkers: Bool = false
     @State private var disableSwipe: Bool = false
-    
+    private var hideDatePicker: Bool = false
+
     @State private var dateRange: [Date] = []
     
     @State private var shouldUpdateView: Bool = false
@@ -59,28 +60,7 @@ public struct FXDatePickerView: View {
             
             HStack {
                 
-                
-                Button(action: {
-                    withAnimation {
-                        arrowRotation = arrowRotation == 0 ? 90 : 0
-                        openShowSelectedMonths.toggle()
-                    }
-                                
-                }, label: {
-                    
-                    HStack(spacing: 5) {
-                        
-                        Text(getMonthName(from: displayedMonth))
-                            .toBold()
-                            .foregroundColor(theme.main.monthTitle)
-                        
-                        Image(systemName: layoutDirection == .rightToLeft ? "chevron.left" : "chevron.right" )
-                            .font(.system(size: 12))
-                            .toBold()
-                            .rotationEffect(.degrees(arrowRotation))
-                            .foregroundColor(theme.main.accentColor)
-                    }
-                })
+                monthTitleView()
 
                 Spacer()
                 
@@ -136,7 +116,7 @@ public struct FXDatePickerView: View {
                     
                 }
                 .id(shouldUpdateView)
-                .frame(height: openShowSelectedMonths != true ? 320 : 342)
+                .frame(height: openShowSelectedMonths != true ? (hideMarkers ? 280 : 320) : (hideMarkers ? 300 : 340))
                 .overlay(
                     
                     openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType)
@@ -161,7 +141,7 @@ public struct FXDatePickerView: View {
             }
         }
         .padding()
-        .background(theme.main.backgroundColor)
+        .background(theme.main.backgroundStyle)
         .onAppear {
             setupCurrentDate()
         }
@@ -175,18 +155,23 @@ public struct FXDatePickerView: View {
 
 public extension FXDatePickerView {
     
-    func hideMarkers(_ show: Bool = true) -> FXDatePickerView {
+    func hideMarkers(_ hide: Bool = true) -> FXDatePickerView {
         var fxDatePicker = self
-        fxDatePicker.hideMarkers = show
+        fxDatePicker.hideMarkers = hide
         return fxDatePicker
     }
     
-    func disableSwipe(_ hide: Bool = true) -> FXDatePickerView {
+    func disableSwipe(_ disable: Bool = true) -> FXDatePickerView {
         let fxDatePicker = self
-        fxDatePicker.disableSwipe = hide
+        fxDatePicker.disableSwipe = disable
         return fxDatePicker
     }
     
+    func hideDatePicker(_ hide: Bool = true) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.hideDatePicker = hide
+        return fxDatePicker
+    }
     
     private func setupCurrentDate() {
         // load 6 years when DatePicker appear
@@ -254,6 +239,36 @@ public extension FXDatePickerView {
         return formatter
     }
     
+   @ViewBuilder func monthTitleView() -> some View {
+       if hideDatePicker {
+           Text(getMonthName(from: displayedMonth))
+               .toBold()
+               .foregroundColor(theme.main.monthTitle)
+       } else {
+           
+           Button(action: {
+               withAnimation {
+                   arrowRotation = arrowRotation == 0 ? 90 : 0
+                   openShowSelectedMonths.toggle()
+               }
+               
+           }, label: {
+               
+               HStack(spacing: 5) {
+                   
+                   Text(getMonthName(from: displayedMonth))
+                       .toBold()
+                       .foregroundColor(theme.main.monthTitle)
+                   
+                   Image(systemName: layoutDirection == .rightToLeft ? "chevron.left" : "chevron.right" )
+                       .font(.system(size: 12))
+                       .toBold()
+                       .rotationEffect(.degrees(arrowRotation))
+                       .foregroundColor(theme.main.accentColor)
+               }
+           })
+       }
+
+    }
+    
 }
-
-

@@ -60,8 +60,35 @@ struct ContentView: View {
             switch calenderType {
             case .gregorian:
                 FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                  // .hideMarkers()
+                   //.hideMarkers()
+                   //.hideDatePicker()
                   // .disableSwipe()
+                    .calenderType(calenderType)
+                    .datePickerTheme(main:
+                        .init(
+                        accentColor: Color(UIColor(red: 0.82, green: 0.26, blue: 0.42, alpha: 1.00)),
+                        monthTitle: Color(UIColor(red: 0.86, green: 0.87, blue: 0.88, alpha: 1.00)),
+                        daysName: Color(UIColor(red: 0.80, green: 0.80, blue: 0.83, alpha: 1.00)),
+                        daysNumbers: Color(UIColor(red: 0.83, green: 0.83, blue: 0.87, alpha: 1.00)),
+                        previousDaysNumber: Color(UIColor(red: 0.66, green: 0.66, blue: 0.69, alpha: 1.00)),
+                        backgroundStyle:
+                                .radialGradient(
+                               Gradient(colors:
+                                  [Color(UIColor(red: 0.19, green: 0.19, blue: 0.22, alpha: 1.00)),
+                                   Color(UIColor(red: 0.11, green: 0.11, blue: 0.14, alpha: 1.00))
+                                  ]
+                                       ),
+                                  center: .center,
+                                  startRadius: 1,
+                                 endRadius: 300)
+                           )
+                       )
+                                     
+            case .hijri:
+                
+                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
+                   .hideMarkers()
+                   .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:
                         .init(
@@ -70,14 +97,8 @@ struct ContentView: View {
                         daysName: Color(UIColor(red: 0.96, green: 0.98, blue: 0.99, alpha: 1.00)),
                         daysNumbers: Color(UIColor(red: 0.96, green: 0.98, blue: 0.99, alpha: 1.00)),
                         previousDaysNumber: Color(UIColor(red: 0.19, green: 0.47, blue: 0.76, alpha: 1.00)),
-                       backgroundColor: Color(UIColor(red: 0.01, green: 0.33, blue: 0.64, alpha: 1.00)))
+                        backgroundStyle: .color(Color(UIColor(red: 0.01, green: 0.33, blue: 0.64, alpha: 1.00))))
                        )
-            case .hijri:
-                
-                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                   .hideMarkers()
-                   .disableSwipe()
-                    .calenderType(calenderType)
             }
             
            

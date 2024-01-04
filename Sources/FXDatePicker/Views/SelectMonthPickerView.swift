@@ -1,5 +1,5 @@
 ////
-//SwiftUIView.swift
+//SelectMonthPickerView.swift
 //
 //
 //Created by Basel Baragabah on 03/01/2024.
@@ -63,10 +63,9 @@ struct SelectMonthPickerView: View {
     
     var body: some View {
         ZStack {
-            theme.main.backgroundColor
-                .ignoresSafeArea()
+            FXBackgroundView(background: theme.main.backgroundStyle)
             
-            PickerView(data: self.pickerData,
+            FXPickerView(data: self.pickerData,
                        selections: self.$selections,
                        textColor: UIColor(theme.main.monthTitle))
             .onChange(of: selections) { value in

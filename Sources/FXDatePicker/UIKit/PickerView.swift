@@ -9,16 +9,16 @@
 import SwiftUI
 
 
-struct PickerView: UIViewRepresentable {
+struct FXPickerView: UIViewRepresentable {
     var data: [[String]]
     @Binding var selections: [Int]
     var textColor: UIColor = .black
 
-    func makeCoordinator() -> PickerView.Coordinator {
+    func makeCoordinator() -> FXPickerView.Coordinator {
         Coordinator(self)
     }
 
-    func makeUIView(context: UIViewRepresentableContext<PickerView>) -> UIPickerView {
+    func makeUIView(context: UIViewRepresentableContext<FXPickerView>) -> UIPickerView {
         let picker = UIPickerView(frame: .zero)
         
         picker.dataSource = context.coordinator
@@ -27,7 +27,7 @@ struct PickerView: UIViewRepresentable {
         return picker
     }
 
-    func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<PickerView>) {
+    func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<FXPickerView>) {
         for i in 0...(self.selections.count - 1) {
             view.selectRow(self.selections[i], inComponent: i, animated: false)
         }
@@ -35,13 +35,13 @@ struct PickerView: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
-        var parent: PickerView
+        var parent: FXPickerView
         
-        init(_ pickerView: PickerView) {
+        init(_ pickerView: FXPickerView) {
             self.parent = pickerView
         }
         
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        func numberOfComponents(in FXPickerView: UIPickerView) -> Int {
             return self.parent.data.count
         }
         

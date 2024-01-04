@@ -41,6 +41,7 @@ public struct DatePickerTheme {
     }
 }
 
+
 public extension DatePickerTheme {
     struct Main {
         public let accentColor: Color
@@ -48,23 +49,29 @@ public extension DatePickerTheme {
         public let daysName: Color
         public let daysNumbers: Color
         public let previousDaysNumber: Color
-        public let backgroundColor: Color
+        public let backgroundStyle: BackgroundStyle
         
         public init(accentColor: Color = .blue,
                     monthTitle: Color = Color(UIColor.label),
                     daysName: Color = .gray,
                     daysNumbers: Color = Color(UIColor.label),
                     previousDaysNumber: Color = .gray,
-                    backgroundColor: Color = Color(UIColor.systemBackground)) {
+                    backgroundStyle: BackgroundStyle = .color(Color(UIColor.systemBackground))) {
             
             self.accentColor = accentColor
             self.monthTitle = monthTitle
             self.daysName = daysName
             self.daysNumbers = daysNumbers
             self.previousDaysNumber = previousDaysNumber
-            self.backgroundColor = backgroundColor
+            self.backgroundStyle = backgroundStyle
             
         }
     }
 }
 
+public enum BackgroundStyle {
+    case color(Color)
+    case linearGradient(Gradient, startPoint: UnitPoint, endPoint: UnitPoint)
+    case radialGradient(Gradient, center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat)
+    case angularGradient(Gradient, center: UnitPoint)
+}

@@ -40,18 +40,21 @@ public struct DayView: View {
                     .cornerRadius(20)
             }
             
-            ZStack {
-                
-                if !hideMarkers {
-                    if let specialDate = specialDate {
-                        specialDateImage(specialDate)
-                    }
+            if !hideMarkers {
+                ZStack {
+                    
+                        if let specialDate = specialDate {
+                            specialDateImage(specialDate)
+                                .frame(height: imageSize)
+                                .padding(.vertical, 10)
+                        }
+                    
+                    
                 }
-                
+                .frame(height: imageSize + 10)
             }
-            .frame(height: imageSize)
         }
-        .frame(height: hideMarkers == false ? 50  : 40) 
+        .frame(height: hideMarkers == false ? 50 : 40)
     }
     
 }
