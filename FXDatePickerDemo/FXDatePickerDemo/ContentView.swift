@@ -13,7 +13,7 @@ struct ContentView: View {
     
     init() {
         // Change the app language to Arabic
-            //  UserDefaults.standard.set(["ar"], forKey: "AppleLanguages")
+              UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
            }
         
     @State private var selectedGregorianDate = Date()

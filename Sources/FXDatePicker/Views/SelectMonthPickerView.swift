@@ -16,7 +16,6 @@ struct SelectMonthPickerView: View {
     let calendar: Calendar
     @Binding var selectedDate: Date
     
-    
     private var years: [Int] {
            switch calenderType {
            case .hijri:
@@ -26,6 +25,18 @@ struct SelectMonthPickerView: View {
            }
        }
 
+    private var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        let currentLocale = Locale.current
+
+        if currentLocale.languageCode == "ar" {
+            formatter.locale = Locale(identifier: "ar")
+        } else {
+            formatter.locale = Locale(identifier: "en")
+        }
+        
+        return formatter
+    }
     
     private var months: [String]
 
@@ -41,7 +52,7 @@ struct SelectMonthPickerView: View {
         let currentYear = calendar.component(.year, from: selectedDate.wrappedValue)
         let currentMonth = calendar.component(.month, from: selectedDate.wrappedValue) - 1
 
-        let yearStrings = years.map { String($0) }
+        let yearStrings = years.map { numberFormatter.string(from: NSNumber(value: $0)) ?? "" }
         let monthStrings = months.map { String($0) }
         pickerData = [yearStrings, monthStrings]
         
