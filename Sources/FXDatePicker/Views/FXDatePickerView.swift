@@ -18,7 +18,7 @@ public struct FXDatePickerView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     
     private var hideMarkers: Bool = false
-    @State private var disableSwipe: Bool = false
+    private var disableSwipe: Bool = false
     private var hideDatePicker: Bool = false
 
     @State private var dateRange: [Date] = []
@@ -121,15 +121,8 @@ public struct FXDatePickerView: View {
                     
                     openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType)
                         .onChange(of: selectedDate, perform: { value in
-                            disableSwipe = true
                             displayedMonth = value
                             setupCurrentDate()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                                disableSwipe = false
-                            })
-                            
-                            
                         })
                     
                     : nil
@@ -162,7 +155,7 @@ public extension FXDatePickerView {
     }
     
     func disableSwipe(_ disable: Bool = true) -> FXDatePickerView {
-        let fxDatePicker = self
+        var fxDatePicker = self
         fxDatePicker.disableSwipe = disable
         return fxDatePicker
     }
