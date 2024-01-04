@@ -18,12 +18,17 @@ public struct FXDatePickerView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     
     private var hideMarkers: Bool = false
-    private var disableSwipe: Bool = false
+    @State private var disableSwipe: Bool = false
+    private var hideDatePicker: Bool = false
 
     @State private var dateRange: [Date] = []
-
+    
     @State private var shouldUpdateView: Bool = false
-
+    
+    @State private var openShowSelectedMonths: Bool = false
+    
+    @State private var arrowRotation: Double = 0
+    
     private var daysOfWeek: [String] {
         return calendar.shortWeekdaySymbols
     }
@@ -44,47 +49,51 @@ public struct FXDatePickerView: View {
     }
     
     
-     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
+    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
     }
-  
+    
     public var body: some View {
-
+        
         VStack {
+            
             HStack {
-                Text(getMonthName(from: displayedMonth))
-                    .toBold()
-                    .foregroundColor(theme.main.monthTitle)
                 
+                monthTitleView()
+
                 Spacer()
                 
-                Button(action: { changeMonth(by: -1) }) {
-                    Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
-                        .toBold()
-                        .foregroundColor(theme.main.accentColor)
-                }
-                .padding(.horizontal)
-                
-                Button(action: { changeMonth(by: 1) }) {
-                    Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
-                        .toBold()
-                        .foregroundColor(theme.main.accentColor)
+                if !openShowSelectedMonths {
+                    
+                    Button(action: { changeMonth(by: -1) }) {
+                        Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
+                            .toBold()
+                            .foregroundColor(theme.main.accentColor)
+                    }
+                    .padding(.horizontal)
+                    
+                    Button(action: { changeMonth(by: 1) }) {
+                        Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
+                            .toBold()
+                            .foregroundColor(theme.main.accentColor)
+                    }
                 }
             }
             .padding(.horizontal, 12)
             .frame(height: 40)
             
             VStack {
-                HStack {
-                    ForEach(daysOfWeek, id: \.self) { day in
-                        Text(day)
-                            .frame(maxWidth: .infinity)
-                            .font(.caption)
-                            .foregroundColor(theme.main.daysName)
+                if !openShowSelectedMonths {
+                    HStack {
+                        ForEach(daysOfWeek, id: \.self) { day in
+                            Text(day)
+                                .frame(maxWidth: .infinity)
+                                .font(.caption)
+                                .foregroundColor(theme.main.daysName)
+                        }
                     }
                 }
-                
                 
                 SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
                     
@@ -107,36 +116,62 @@ public struct FXDatePickerView: View {
                     
                 }
                 .id(shouldUpdateView)
-                .frame(height: 320)
+                .frame(height: openShowSelectedMonths != true ? (hideMarkers ? 280 : 320) : (hideMarkers ? 300 : 340))
+                .overlay(
+                    
+                    openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType)
+                        .onChange(of: selectedDate, perform: { value in
+                            disableSwipe = true
+                            displayedMonth = value
+                            setupCurrentDate()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                                disableSwipe = false
+                            })
+                            
+                            
+                        })
+                    
+                    : nil
+                    
+                    
+                    
+                    , alignment: .center)
+                
             }
         }
         .padding()
-        .background(theme.main.backgroundColor)
+        .background(theme.main.backgroundStyle)
         .onAppear {
             setupCurrentDate()
         }
         .onChange(of: displayedMonth) { newMonth in
             updateDateRangeIfNeeded(for: newMonth)
         }
-
+        
     }
-
+    
 }
 
 public extension FXDatePickerView {
     
-    func hideMarkers(_ show: Bool = true) -> FXDatePickerView {
+    func hideMarkers(_ hide: Bool = true) -> FXDatePickerView {
         var fxDatePicker = self
-        fxDatePicker.hideMarkers = show
+        fxDatePicker.hideMarkers = hide
         return fxDatePicker
     }
     
-    func disableSwipe(_ hide: Bool = true) -> FXDatePickerView {
-        var fxDatePicker = self
-        fxDatePicker.disableSwipe = hide
+    func disableSwipe(_ disable: Bool = true) -> FXDatePickerView {
+        let fxDatePicker = self
+        fxDatePicker.disableSwipe = disable
         return fxDatePicker
     }
     
+    func hideDatePicker(_ hide: Bool = true) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.hideDatePicker = hide
+        return fxDatePicker
+    }
     
     private func setupCurrentDate() {
         // load 6 years when DatePicker appear
@@ -145,10 +180,10 @@ public extension FXDatePickerView {
         dateRange = generateMonths(start: startRange, end: endRange)
     }
     
-// Needed for Swipe feature to load more Months
+    // Needed for Swipe feature to load more Months
     private func updateDateRangeIfNeeded(for month: Date) {
         let monthStart = month
-
+        
         // Check and extend the end of the range
         if let lastMonth = dateRange.last, monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth)! {
             let newEnd = calendar.date(byAdding: .month, value: 6, to: lastMonth)!
@@ -157,9 +192,9 @@ public extension FXDatePickerView {
             dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
             print("Extended end of range. New range: \(dateRange)")
             shouldUpdateView.toggle()
-
+            
         }
-
+        
         // Check and extend the start of the range
         if let firstMonth = dateRange.first, monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth)! {
             let newStart = calendar.date(byAdding: .month, value: -6, to: firstMonth)!
@@ -168,25 +203,23 @@ public extension FXDatePickerView {
             dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
             print("Extended start of range. New range: \(dateRange)")
             shouldUpdateView.toggle()
-
+            
         }
     }
-
+    
     
     private func generateMonths(start: Date, end: Date) -> [Date] {
-           var months: [Date] = []
-           var currentDate = start
-
-           while currentDate <= end {
-               months.append(currentDate)
-               currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate)!
-           }
-
-           return months
-       }
-
-
-
+        var months: [Date] = []
+        var currentDate = start
+        
+        while currentDate <= end {
+            months.append(currentDate)
+            currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate)!
+        }
+        
+        return months
+    }
+    
     func changeMonth(by increment: Int) {
         if let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth) {
             displayedMonth = newMonth
@@ -206,6 +239,36 @@ public extension FXDatePickerView {
         return formatter
     }
     
+   @ViewBuilder func monthTitleView() -> some View {
+       if hideDatePicker {
+           Text(getMonthName(from: displayedMonth))
+               .toBold()
+               .foregroundColor(theme.main.monthTitle)
+       } else {
+           
+           Button(action: {
+               withAnimation {
+                   arrowRotation = arrowRotation == 0 ? 90 : 0
+                   openShowSelectedMonths.toggle()
+               }
+               
+           }, label: {
+               
+               HStack(spacing: 5) {
+                   
+                   Text(getMonthName(from: displayedMonth))
+                       .toBold()
+                       .foregroundColor(theme.main.monthTitle)
+                   
+                   Image(systemName: layoutDirection == .rightToLeft ? "chevron.left" : "chevron.right" )
+                       .font(.system(size: 12))
+                       .toBold()
+                       .rotationEffect(.degrees(arrowRotation))
+                       .foregroundColor(theme.main.accentColor)
+               }
+           })
+       }
+
+    }
+    
 }
-
-
