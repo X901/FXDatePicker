@@ -58,10 +58,26 @@ For a custom image, set dateType to .image and provide the date along with the n
 
 ```swift
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
-.calenderType(.hijri)
+.calenderType(.hijri(.islamicUmmAlQura))
 ```
 
 The default is `.gregorian.`
+
+#### Hijri Calendar:
+
+For the Hijri calendar, you need to specify the type of calendar. The default in Saudi Arabia is .islamicUmmAlQura. However, you can choose from several types of Hijri calendars, such as .islamic, .islamicCivil, or .islamicTabular.
+
+Example setting a different Hijri calendar type:
+
+```swift
+.calenderType(.hijri(.islamicCivil))
+```
+
+#### Customization Note:
+**Adapting to Local Moon Sighting**: The Hijri calendar is based on the lunar cycle, and its dates can vary based on moon sightings. This variation can sometimes necessitate adjusting the calendar by a day or so.
+
+**Flexibility for Users**: It's advisable to allow users to change the Hijri calendar type within your app. This flexibility can accommodate regional differences and personal preferences in moon sighting practices, ensuring that your app remains relevant and useful for a diverse user base.
+
 
 ### datePickerTheme
 
