@@ -9,7 +9,7 @@
 import SwiftUI
 
 @available(iOS 14.0, *)
-public struct MonthView: View {
+internal struct MonthView: View {
     @Binding var displayedMonth: Date
     @Binding var selectedDate: Date
     let specialDates: [SpecialDate]
@@ -55,7 +55,7 @@ public struct MonthView: View {
     private let maxRows: Int = 6
 
     
-    public var body: some View {
+    internal var body: some View {
         let rowHeight: CGFloat = (hideMarkers == false) ? 50 : 45
         let totalRowHeight = CGFloat(numberOfRows) * rowHeight
         let totalPaddingHeight = totalMonthViewHeight - totalRowHeight

@@ -9,16 +9,16 @@
 import SwiftUI
 
 
-struct FXPickerView: UIViewRepresentable {
+internal struct FXPickerView: UIViewRepresentable {
     var data: [[String]]
     @Binding var selections: [Int]
     var textColor: UIColor = .black
 
-    func makeCoordinator() -> FXPickerView.Coordinator {
+    internal func makeCoordinator() -> FXPickerView.Coordinator {
         Coordinator(self)
     }
 
-    func makeUIView(context: UIViewRepresentableContext<FXPickerView>) -> UIPickerView {
+    internal func makeUIView(context: UIViewRepresentableContext<FXPickerView>) -> UIPickerView {
         let picker = UIPickerView(frame: .zero)
         
         picker.dataSource = context.coordinator
@@ -27,29 +27,29 @@ struct FXPickerView: UIViewRepresentable {
         return picker
     }
 
-    func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<FXPickerView>) {
+    internal func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<FXPickerView>) {
         for i in 0...(self.selections.count - 1) {
             view.selectRow(self.selections[i], inComponent: i, animated: false)
         }
         context.coordinator.parent = self
     }
     
-    class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
+    internal class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         var parent: FXPickerView
         
-        init(_ pickerView: FXPickerView) {
+        internal init(_ pickerView: FXPickerView) {
             self.parent = pickerView
         }
         
-        func numberOfComponents(in FXPickerView: UIPickerView) -> Int {
+        internal func numberOfComponents(in FXPickerView: UIPickerView) -> Int {
             return self.parent.data.count
         }
         
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        internal func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
             return self.parent.data[component].count
         }
         
-        func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        internal func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
             var label: UILabel
             if let reuseLabel = view as? UILabel {
                 label = reuseLabel
@@ -65,7 +65,7 @@ struct FXPickerView: UIViewRepresentable {
             return label
         }
         
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        internal func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             self.parent.selections[component] = row
         }
     }

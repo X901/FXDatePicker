@@ -9,7 +9,7 @@
 import SwiftUI
 
 @available(iOS 14.0, *)
-public struct DayView: View {
+internal struct DayView: View {
     let date: Date?
     let isSelected: Bool
     let isBeforeToday: Bool
@@ -23,7 +23,7 @@ public struct DayView: View {
     @Environment(\.calenderType) private var calenderType
     @Environment(\.datePickerTheme) private var theme
     
-    public var body: some View {
+    internal var body: some View {
         VStack(spacing: 0) {
             if let date = date {
                 Text(dayFormatter.string(from: date))

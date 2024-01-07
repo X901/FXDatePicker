@@ -38,15 +38,26 @@ public struct FXDatePickerView: View {
         case .gregorian:
             var calendar = Calendar(identifier: .gregorian)
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
-            
             return calendar
             
-        case .hijri:
-            var calendar = Calendar(identifier: .islamicUmmAlQura)
+        case .hijri(let hijriType):
+            var calendar: Calendar
+            switch hijriType {
+            case .islamicUmmAlQura:
+                calendar = Calendar(identifier: .islamicUmmAlQura)
+            case .islamic:
+                calendar = Calendar(identifier: .islamic)
+            case .islamicCivil:
+                calendar = Calendar(identifier: .islamicCivil)
+            case .islamicTabular:
+                calendar = Calendar(identifier: .islamicTabular)
+            }
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
             return calendar
         }
     }
+
+    
     
     
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {

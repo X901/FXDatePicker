@@ -43,7 +43,7 @@ struct ContentView: View {
     var body: some View {
         
         VStack {
-                        
+            
             Picker("", selection: $selectedCalender) {
                 Text("Gregorian").tag(0)
                 Text("Hijri").tag(1)
@@ -53,15 +53,15 @@ struct ContentView: View {
                 if value == 0 {
                     calenderType = .gregorian
                 } else {
-                    calenderType = .hijri
+                    calenderType = .hijri(.islamicUmmAlQura)
                 }
             }
 
             switch calenderType {
             case .gregorian:
                 FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                   //.hideMarkers()
-                   //.hideDatePicker()
+                  // .hideMarkers()
+                  // .hideDatePicker()
                   // .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:
