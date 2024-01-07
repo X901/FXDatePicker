@@ -8,7 +8,7 @@
 
 import SwiftUI
 
- struct FXBackgroundView: View {
+internal struct FXBackgroundView: View {
     let background: BackgroundStyle
 
     var body: some View {

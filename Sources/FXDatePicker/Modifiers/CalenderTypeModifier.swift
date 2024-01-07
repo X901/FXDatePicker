@@ -8,9 +8,16 @@
 
 import SwiftUI
 
+public enum HijriType {
+    case islamicUmmAlQura
+    case islamic
+    case islamicCivil
+    case islamicTabular
+}
+
 public enum CalenderType {
     case gregorian
-    case hijri
+    case hijri(HijriType)
 }
 
 public struct CalenderTypeModifier: ViewModifier {

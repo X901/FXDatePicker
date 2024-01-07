@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SwipeView<Content: View>: View {
+internal struct SwipeView<Content: View>: View {
     let content: () -> Content
     var isDisable: Bool
     @Binding var displayedMonth: Date

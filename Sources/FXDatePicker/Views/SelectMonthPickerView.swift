@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SelectMonthPickerView: View {
+internal struct SelectMonthPickerView: View {
     
     @Environment(\.datePickerTheme) private var theme
     let calenderType: CalenderType
