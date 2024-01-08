@@ -53,11 +53,20 @@ public struct FXDatePickerView: View {
                 calendar = Calendar(identifier: .islamicTabular)
             }
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
+            
             return calendar
         }
     }
 
-    
+    private var canMoveToPreviousMonth: Bool {
+           guard let minDate = dateRange.first else { return false }
+           return calendar.date(byAdding: .month, value: -1, to: displayedMonth) ?? Date() >= minDate
+       }
+
+       private var canMoveToNextMonth: Bool {
+           guard let maxDate = dateRange.last else { return false }
+           return calendar.date(byAdding: .month, value: 1, to: displayedMonth) ?? Date() <= maxDate
+       }
     
     
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
@@ -80,15 +89,18 @@ public struct FXDatePickerView: View {
                     Button(action: { changeMonth(by: -1) }) {
                         Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
                             .toBold()
-                            .foregroundColor(theme.main.accentColor)
+                            .foregroundColor(canMoveToPreviousMonth ? theme.main.accentColor : Color.gray)
+
                     }
                     .padding(.horizontal)
-                    
+                    .disabled(!canMoveToPreviousMonth)
+
                     Button(action: { changeMonth(by: 1) }) {
                         Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
                             .toBold()
-                            .foregroundColor(theme.main.accentColor)
+                            .foregroundColor(canMoveToNextMonth ? theme.main.accentColor : Color.gray)
                     }
+                    .disabled(!canMoveToNextMonth)
                 }
             }
             .padding(.horizontal, 12)
@@ -150,7 +162,10 @@ public struct FXDatePickerView: View {
             setupCurrentDate()
         }
         .onChange(of: displayedMonth) { newMonth in
-            updateDateRangeIfNeeded(for: newMonth)
+            let start = Date()
+            let end = calendar.date(byAdding: .year, value: 1, to: start) ?? Date()
+
+            updateDateRangeIfNeeded(for: newMonth, limitDate: end)
         }
         
     }
@@ -178,39 +193,44 @@ public extension FXDatePickerView {
     }
     
     private func setupCurrentDate() {
-        // load 6 years when DatePicker appear
-        let startRange = calendar.date(byAdding: .year, value: -6, to: displayedMonth)!
-        let endRange = calendar.date(byAdding: .year, value: 6, to: displayedMonth)!
-        dateRange = generateMonths(start: startRange, end: endRange)
+        let start = displayedMonth
+        let end = calendar.date(byAdding: .year, value: 2, to: Date()) ?? Date()
+        dateRange = generateMonths(start: start, end: end)
     }
     
-    // Needed for Swipe feature to load more Months
-    private func updateDateRangeIfNeeded(for month: Date) {
+    private func updateDateRangeIfNeeded(for month: Date, limitDate: Date) {
         let monthStart = month
-        
-        // Check and extend the end of the range
-        if let lastMonth = dateRange.last, monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth)! {
-            let newEnd = calendar.date(byAdding: .month, value: 6, to: lastMonth)!
-            let newMonths = generateMonths(start: lastMonth, end: newEnd).filter { !dateRange.contains($0) }
-            dateRange.append(contentsOf: newMonths)
-            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
-            print("Extended end of range. New range: \(dateRange)")
-            shouldUpdateView.toggle()
-            
+
+        // Extend the end of the range but not beyond the limitDate
+        if let lastMonth = dateRange.last,
+           monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth) ?? Date(),
+           limitDate > lastMonth {
+
+            let newEnd = min(calendar.date(byAdding: .month, value: 6, to: lastMonth) ?? Date(), limitDate)
+            extendDateRange(from: lastMonth, to: newEnd)
         }
-        
-        // Check and extend the start of the range
-        if let firstMonth = dateRange.first, monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth)! {
-            let newStart = calendar.date(byAdding: .month, value: -6, to: firstMonth)!
-            let newMonths = generateMonths(start: newStart, end: firstMonth).filter { !dateRange.contains($0) }
-            dateRange.insert(contentsOf: newMonths, at: 0)
-            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
-            print("Extended start of range. New range: \(dateRange)")
-            shouldUpdateView.toggle()
-            
+
+        // Extend the start of the range but not beyond the limitDate
+        if let firstMonth = dateRange.first,
+           monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth) ?? Date(),
+           limitDate < firstMonth {
+
+            let newStart = max(calendar.date(byAdding: .month, value: -6, to: firstMonth) ?? Date(), limitDate)
+            extendDateRange(from: newStart, to: firstMonth, atStart: true)
         }
     }
-    
+
+    private func extendDateRange(from start: Date, to end: Date, atStart: Bool = false) {
+        let newMonths = generateMonths(start: start, end: end).filter { !dateRange.contains($0) }
+        if atStart {
+            dateRange.insert(contentsOf: newMonths, at: 0)
+        } else {
+            dateRange.append(contentsOf: newMonths)
+        }
+        dateRange = Array(Set(dateRange)).sorted()
+        print("Extended date range. New range: \(dateRange)")
+    }
+
     
     private func generateMonths(start: Date, end: Date) -> [Date] {
         var months: [Date] = []
@@ -224,11 +244,29 @@ public extension FXDatePickerView {
         return months
     }
     
+
     func changeMonth(by increment: Int) {
-        if let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth) {
+        guard let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth) else {
+            print("Failed to calculate new month")
+            return
+        }
+
+        // Assuming dateRange is sorted, get the minimum and maximum dates
+        guard let minDate = dateRange.first, let maxDate = dateRange.last else {
+            print("Date range is empty")
+            return
+        }
+
+        // Check if the newMonth is within the dateRange
+        if newMonth >= minDate && newMonth <= maxDate {
             displayedMonth = newMonth
+            
+        } else {
+            print("New month is outside the date range")
         }
     }
+
+
     
     private func getMonthName(from date: Date) -> String {
         let formatter = monthFormatter
