@@ -10,7 +10,7 @@ import SwiftUI
 
 
 internal struct FXPickerView: UIViewRepresentable {
-    var data: [[String]]
+    @Binding var data: [[String]]
     @Binding var selections: [Int]
     var textColor: UIColor = .black
 
@@ -29,11 +29,23 @@ internal struct FXPickerView: UIViewRepresentable {
 
     internal func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<FXPickerView>) {
         for i in 0...(self.selections.count - 1) {
-            view.selectRow(self.selections[i], inComponent: i, animated: false)
+            view.selectRow(self.selections[i], inComponent: i, animated: true)
         }
+
+        DispatchQueue.main.async {
+            view.reloadAllComponents() // Reload components at the end
+
+            // If only one month is available, select it automatically
+            if self.data.count > 1 && self.data[1].count == 1 {
+                self.selections[1] = 0
+                view.selectRow(0, inComponent: 1, animated: false)
+            }
+        }
+
         context.coordinator.parent = self
     }
-    
+
+
     internal class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         var parent: FXPickerView
         

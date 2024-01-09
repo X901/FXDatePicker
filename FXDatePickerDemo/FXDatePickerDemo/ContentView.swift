@@ -42,6 +42,7 @@ struct ContentView: View {
 
     var body: some View {
         
+        
         VStack {
             
             Picker("", selection: $selectedCalender) {
@@ -59,7 +60,7 @@ struct ContentView: View {
 
             switch calenderType {
             case .gregorian:
-                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
+                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: Date()...)
                   // .hideMarkers()
                   // .hideDatePicker()
                   // .disableSwipe()

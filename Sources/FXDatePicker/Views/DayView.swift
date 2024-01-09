@@ -20,7 +20,6 @@ internal struct DayView: View {
     private let imageSize: CGFloat = 25
     let calendar: Calendar
     
-    @Environment(\.calenderType) private var calenderType
     @Environment(\.datePickerTheme) private var theme
     
     internal var body: some View {

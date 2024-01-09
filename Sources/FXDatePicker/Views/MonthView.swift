@@ -15,7 +15,6 @@ internal struct MonthView: View {
     let specialDates: [SpecialDate]
     
     @Environment(\.datePickerTheme) private var theme
-    @Environment(\.calenderType) private var calenderType
     @Environment(\.layoutDirection) private var layoutDirection
     
     let calendar: Calendar
