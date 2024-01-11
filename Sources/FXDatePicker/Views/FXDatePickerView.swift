@@ -14,20 +14,21 @@ public struct FXDatePickerView: View {
     var specialDates: [SpecialDate]
     
     @Environment(\.datePickerTheme) private var theme
-    @Environment(\.calenderType) private var calenderType
+    private var calenderType: CalenderType = .gregorian
     @Environment(\.layoutDirection) private var layoutDirection
     
     private var hideMarkers: Bool = false
     private var disableSwipe: Bool = false
     private var hideDatePicker: Bool = false
-
+    
     @State private var dateRange: [Date] = []
-    
-    @State private var shouldUpdateView: Bool = false
-    
+        
     @State private var openShowSelectedMonths: Bool = false
     
     @State private var arrowRotation: Double = 0
+    @State private var selectedIndex: Int = 0
+    
+    var closeRange: ClosedRange<Date> = Date()...Date()
     
     private var daysOfWeek: [String] {
         return calendar.shortWeekdaySymbols
@@ -37,6 +38,7 @@ public struct FXDatePickerView: View {
         switch calenderType {
         case .gregorian:
             var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = .current
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
             return calendar
             
@@ -53,17 +55,117 @@ public struct FXDatePickerView: View {
                 calendar = Calendar(identifier: .islamicTabular)
             }
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
+            
             return calendar
         }
     }
+    
+    private var canMoveToPreviousMonth: Bool {
+        guard let previousMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth) else { return false }
+        return previousMonth >= closeRange.lowerBound
+    }
 
-    
-    
-    
+    private var canMoveToNextMonth: Bool {
+        guard let nextMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth) else { return false }
+        return nextMonth <= closeRange.upperBound
+    }
+
+    // MARK:- with specialDates
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
+        
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = start...end
+
+        self._displayedMonth = State(initialValue: Date())
     }
+    
+    
+    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate], in closeReange: ClosedRange<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = specialDates
+        self.closeRange = closeReange
+        
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
+    }
+    
+    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate], in range: PartialRangeFrom<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = specialDates
+        
+        let startOfToday = calendar.startOfDay(for: Date())
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = startOfToday...end
+        
+        self._displayedMonth = State(initialValue: startOfToday)
+    }
+    
+    public init(selectedDate: Binding<Date>, specialDates: [SpecialDate], in range: PartialRangeThrough<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = specialDates
+        
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+        
+        self.closeRange = start...range.upperBound + 1
+        
+        self._displayedMonth = State(initialValue: range.upperBound)
+    }
+    
+    
+    // MARK:- without specialDates
+    public init(selectedDate: Binding<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = []
+        
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = start...end
+        
+        self._displayedMonth = State(initialValue: Date())
+        self.hideMarkers = true
+    }
+    
+    
+    public init(selectedDate: Binding<Date>, in closeReange: ClosedRange<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = []
+        self.closeRange = closeReange
+        
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
+    }
+    
+    public init(selectedDate: Binding<Date>, in range: PartialRangeFrom<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = []
+        
+        let startOfToday = calendar.startOfDay(for: Date())
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = startOfToday...end
+
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
+        self.hideMarkers = true
+        
+    }
+    
+    public init(selectedDate: Binding<Date>, in range: PartialRangeThrough<Date>) {
+        self._selectedDate = selectedDate
+        self.specialDates = []
+        
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+
+        self.closeRange = start...(range.upperBound + 1)
+        
+        self._displayedMonth = State(initialValue: closeRange.upperBound)
+        self.hideMarkers = true
+        
+    }
+    
     
     public var body: some View {
         
@@ -72,7 +174,7 @@ public struct FXDatePickerView: View {
             HStack {
                 
                 monthTitleView()
-
+                
                 Spacer()
                 
                 if !openShowSelectedMonths {
@@ -80,15 +182,18 @@ public struct FXDatePickerView: View {
                     Button(action: { changeMonth(by: -1) }) {
                         Image(systemName: layoutDirection == .leftToRight ? "chevron.left" : "chevron.right")
                             .toBold()
-                            .foregroundColor(theme.main.accentColor)
+                            .foregroundColor(canMoveToPreviousMonth ? theme.main.accentColor : Color.gray)
+                        
                     }
                     .padding(.horizontal)
+                    .disabled(!canMoveToPreviousMonth)
                     
                     Button(action: { changeMonth(by: 1) }) {
                         Image(systemName: layoutDirection == .leftToRight ? "chevron.right" : "chevron.left")
                             .toBold()
-                            .foregroundColor(theme.main.accentColor)
+                            .foregroundColor(canMoveToNextMonth ? theme.main.accentColor : Color.gray)
                     }
+                    .disabled(!canMoveToNextMonth)
                 }
             }
             .padding(.horizontal, 12)
@@ -106,34 +211,40 @@ public struct FXDatePickerView: View {
                     }
                 }
                 
-                SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
+                
+                SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, selectedIndex: $selectedIndex, calendar: calendar, isDisable: disableSwipe) {
                     
                     if disableSwipe {
                         MonthView(displayedMonth: $displayedMonth,
                                   selectedDate: $selectedDate,
                                   specialDates: specialDates,
                                   calendar: calendar,
-                                  hideMarkers: hideMarkers)
+                                  hideMarkers: hideMarkers,
+                                  closeRange: closeRange)
                     } else {
-                        ForEach($dateRange, id: \.self) { $month in
-                            MonthView(displayedMonth: $month,
+                       // ForEach($dateRange, id: \.self) { $month in
+                            ForEach(0..<dateRange.count, id: \.self) { index in
+                            MonthView(displayedMonth: $dateRange[index],
                                       selectedDate: $selectedDate,
                                       specialDates: specialDates,
                                       calendar: calendar,
-                                      hideMarkers: hideMarkers)
-                            .tag(month)
+                                      hideMarkers: hideMarkers,
+                                      closeRange: closeRange)
+                                .tag(index)
+                                .id(index)
+
                         }
                     }
                     
                 }
-                .id(shouldUpdateView)
                 .frame(height: openShowSelectedMonths != true ? (hideMarkers ? 280 : 320) : (hideMarkers ? 300 : 340))
                 .overlay(
                     
-                    openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType)
+                    openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType, closeRange: closeRange)
                         .onChange(of: selectedDate, perform: { value in
+                            selectedIndex = FXDatePicker.findCurrentDateIndex(calendar: calendar, dateRange: dateRange, selectedDate: value)
+
                             displayedMonth = value
-                            setupCurrentDate()
                         })
                     
                     : nil
@@ -149,15 +260,21 @@ public struct FXDatePickerView: View {
         .onAppear {
             setupCurrentDate()
         }
-        .onChange(of: displayedMonth) { newMonth in
-            updateDateRangeIfNeeded(for: newMonth)
-        }
-        
     }
     
+    private func findCurrentDateIndex(currentDate: Date) -> Int {
+           // Find the index of the current date
+           return dateRange.firstIndex(where: { calendar.isDate($0, equalTo: currentDate, toGranularity: .day) }) ?? (dateRange.count - 1)
+       }
 }
 
+//MARK:- Modifiers
 public extension FXDatePickerView {
+    func calenderType(_ calenderType: CalenderType = .gregorian) -> FXDatePickerView {
+        var fxDatePicker = self
+        fxDatePicker.calenderType = calenderType
+        return fxDatePicker
+    }
     
     func hideMarkers(_ hide: Bool = true) -> FXDatePickerView {
         var fxDatePicker = self
@@ -176,42 +293,15 @@ public extension FXDatePickerView {
         fxDatePicker.hideDatePicker = hide
         return fxDatePicker
     }
+}
+
+//MARK:- Healper Functions
+public extension FXDatePickerView {
     
     private func setupCurrentDate() {
-        // load 6 years when DatePicker appear
-        let startRange = calendar.date(byAdding: .year, value: -6, to: displayedMonth)!
-        let endRange = calendar.date(byAdding: .year, value: 6, to: displayedMonth)!
-        dateRange = generateMonths(start: startRange, end: endRange)
+        dateRange = generateMonths(start: closeRange.lowerBound, end: closeRange.upperBound)
     }
-    
-    // Needed for Swipe feature to load more Months
-    private func updateDateRangeIfNeeded(for month: Date) {
-        let monthStart = month
-        
-        // Check and extend the end of the range
-        if let lastMonth = dateRange.last, monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth)! {
-            let newEnd = calendar.date(byAdding: .month, value: 6, to: lastMonth)!
-            let newMonths = generateMonths(start: lastMonth, end: newEnd).filter { !dateRange.contains($0) }
-            dateRange.append(contentsOf: newMonths)
-            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
-            print("Extended end of range. New range: \(dateRange)")
-            shouldUpdateView.toggle()
-            
-        }
-        
-        // Check and extend the start of the range
-        if let firstMonth = dateRange.first, monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth)! {
-            let newStart = calendar.date(byAdding: .month, value: -6, to: firstMonth)!
-            let newMonths = generateMonths(start: newStart, end: firstMonth).filter { !dateRange.contains($0) }
-            dateRange.insert(contentsOf: newMonths, at: 0)
-            dateRange = Array(Set(dateRange)).sorted() // Remove duplicates and sort
-            print("Extended start of range. New range: \(dateRange)")
-            shouldUpdateView.toggle()
-            
-        }
-    }
-    
-    
+
     private func generateMonths(start: Date, end: Date) -> [Date] {
         var months: [Date] = []
         var currentDate = start
@@ -223,13 +313,21 @@ public extension FXDatePickerView {
         
         return months
     }
-    
+
     func changeMonth(by increment: Int) {
-        if let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth) {
+        guard let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth),
+              let newMonthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: newMonth)) else {
+            print("Failed to calculate new month")
+            return
+        }
+        
+        if closeRange.contains(newMonthStart) {
             displayedMonth = newMonth
+        } else {
+            print("New month is outside the close range")
         }
     }
-    
+
     private func getMonthName(from date: Date) -> String {
         let formatter = monthFormatter
         return formatter.string(from: date)
@@ -243,36 +341,36 @@ public extension FXDatePickerView {
         return formatter
     }
     
-   @ViewBuilder func monthTitleView() -> some View {
-       if hideDatePicker {
-           Text(getMonthName(from: displayedMonth))
-               .toBold()
-               .foregroundColor(theme.main.monthTitle)
-       } else {
-           
-           Button(action: {
-               withAnimation {
-                   arrowRotation = arrowRotation == 0 ? 90 : 0
-                   openShowSelectedMonths.toggle()
-               }
-               
-           }, label: {
-               
-               HStack(spacing: 5) {
-                   
-                   Text(getMonthName(from: displayedMonth))
-                       .toBold()
-                       .foregroundColor(theme.main.monthTitle)
-                   
-                   Image(systemName: layoutDirection == .rightToLeft ? "chevron.left" : "chevron.right" )
-                       .font(.system(size: 12))
-                       .toBold()
-                       .rotationEffect(.degrees(arrowRotation))
-                       .foregroundColor(theme.main.accentColor)
-               }
-           })
-       }
-
+    @ViewBuilder func monthTitleView() -> some View {
+        if hideDatePicker {
+            Text(getMonthName(from: displayedMonth))
+                .toBold()
+                .foregroundColor(theme.main.monthTitle)
+        } else {
+            
+            Button(action: {
+                withAnimation {
+                    arrowRotation = arrowRotation == 0 ? 90 : 0
+                    openShowSelectedMonths.toggle()
+                }
+                
+            }, label: {
+                
+                HStack(spacing: 5) {
+                    
+                    Text(getMonthName(from: displayedMonth))
+                        .toBold()
+                        .foregroundColor(theme.main.monthTitle)
+                    
+                    Image(systemName: layoutDirection == .rightToLeft ? "chevron.left" : "chevron.right" )
+                        .font(.system(size: 12))
+                        .toBold()
+                        .rotationEffect(.degrees(arrowRotation))
+                        .foregroundColor(theme.main.accentColor)
+                }
+            })
+        }
+        
     }
     
 }

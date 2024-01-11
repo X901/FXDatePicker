@@ -40,29 +40,45 @@ struct ContentView: View {
     @State private var selectedCalender = 0
     @State private var calenderType: CalenderType = .gregorian
 
+    private var cloaseRange: ClosedRange<Date> {
+        let calendar = Calendar.current
+        // Set 'today' to the start of the current day
+         let startOfToday = calendar.startOfDay(for: Date())
+        
+            guard let endOfRange = calendar.date(bySetting: .day, value: 18, of: startOfToday) else {
+            fatalError("Could not create start or end date for range")
+        }
+
+        return startOfToday...endOfRange
+    }
+
+    
     var body: some View {
+        
         
         VStack {
             
-            Picker("", selection: $selectedCalender) {
-                Text("Gregorian").tag(0)
-                Text("Hijri").tag(1)
-            }
-            .pickerStyle(.segmented)
-            .onChange(of: selectedCalender) { value in
-                if value == 0 {
-                    calenderType = .gregorian
-                } else {
-                    calenderType = .hijri(.islamicUmmAlQura)
-                }
-            }
+//            Picker("", selection: $selectedCalender) {
+//                Text("Gregorian").tag(0)
+//                Text("Hijri").tag(1)
+//            }
+//            .pickerStyle(.segmented)
+//            .onChange(of: selectedCalender) { value in
+//                if value == 0 {
+//                    calenderType = .gregorian
+//                } else {
+//                    calenderType = .hijri(.islamicUmmAlQura)
+//                }
+//            }
 
             switch calenderType {
             case .gregorian:
-                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
+//                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
+                
+                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: cloaseRange)
                   // .hideMarkers()
                   // .hideDatePicker()
-                  // .disableSwipe()
+//                   .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:
                         .init(
@@ -88,7 +104,7 @@ struct ContentView: View {
                 
                 FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
                    .hideMarkers()
-                   .disableSwipe()
+                  // .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:
                         .init(

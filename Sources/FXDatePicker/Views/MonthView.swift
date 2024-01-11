@@ -15,11 +15,11 @@ internal struct MonthView: View {
     let specialDates: [SpecialDate]
     
     @Environment(\.datePickerTheme) private var theme
-    @Environment(\.calenderType) private var calenderType
     @Environment(\.layoutDirection) private var layoutDirection
     
     let calendar: Calendar
     let hideMarkers: Bool
+    let closeRange: ClosedRange<Date>
     
     private var totalCells: Int { 6 * 7 } // 6 rows, 7 columns
 
@@ -79,6 +79,7 @@ extension MonthView {
             let specialDate = findSpecialDate(for: date)
             
             DayView(date: date,
+                    closeRange: closeRange,
                     isSelected: isSameDay(date1: selectedDate, date2: date),
                     isBeforeToday: isDateBeforeToday(date: date),
                     isToday: isToday(date: date),

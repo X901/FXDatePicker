@@ -9,106 +9,80 @@
 import SwiftUI
 
 internal struct SelectMonthPickerView: View {
-    
     @Environment(\.datePickerTheme) private var theme
-    let calenderType: CalenderType
-
     let calendar: Calendar
+    let calenderType: CalenderType
+    let closeRange: ClosedRange<Date>
     @Binding var selectedDate: Date
-    
-    private var years: [Int] {
-           switch calenderType {
-           case .hijri:
-               return Array(1300...1500)
-           default:
-               return Array(1900...2100)
-           }
-       }
 
-    private var numberFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        let currentLocale = Locale.current
-
-        if currentLocale.languageCode == "ar" {
-            formatter.locale = Locale(identifier: "ar")
-        } else {
-            formatter.locale = Locale(identifier: "en")
-        }
-        
-        return formatter
-    }
-    
-    private var months: [String]
-
-    private var pickerData: [[String]] = [[]]
+    @State private var pickerData: [[String]] = [[]]
     @State private var selections: [Int] = []
 
-    init(selectedDate: Binding<Date>, calendar: Calendar, calenderType: CalenderType) {
+    private var years: [Int] {
+        let startYear = calendar.component(.year, from: closeRange.lowerBound)
+        let endYear = calendar.component(.year, from: closeRange.upperBound)
+        return Array(startYear...endYear)
+    }
+
+    init(selectedDate: Binding<Date>, calendar: Calendar, calenderType: CalenderType, closeRange: ClosedRange<Date>) {
         self.calendar = calendar
         self._selectedDate = selectedDate
-        self.months = calendar.monthSymbols
         self.calenderType = calenderType
+        self.closeRange = closeRange
 
         let currentYear = calendar.component(.year, from: selectedDate.wrappedValue)
         let currentMonth = calendar.component(.month, from: selectedDate.wrappedValue) - 1
-
-        let yearStrings = years.map { numberFormatter.string(from: NSNumber(value: $0)) ?? "" }
-        let monthStrings = months.map { String($0) }
-        pickerData = [yearStrings, monthStrings]
-        
         let yearIndex = years.firstIndex(of: currentYear) ?? 0
+
+        let initialMonths = getMonths(for: currentYear)
+        self._pickerData = State(initialValue: [years.map { String($0) }, initialMonths])
         self._selections = State(initialValue: [yearIndex, currentMonth])
     }
 
-    
     var body: some View {
         ZStack {
             FXBackgroundView(background: theme.main.backgroundStyle)
-            
-            FXPickerView(data: self.pickerData,
-                       selections: self.$selections,
-                       textColor: UIColor(theme.main.monthTitle))
-            .onChange(of: selections) { value in
-                updateSelectedDate(with: value)
-            }
-        }
-       
-        
-    }
-}
 
-extension SelectMonthPickerView {
-    
+            FXPickerView(data: $pickerData, selections: $selections, textColor: UIColor(theme.main.monthTitle))
+                .onChange(of: selections[0]) { yearIndex in
+                    let selectedYear = years[yearIndex]
+                    pickerData[1] = getMonths(for: selectedYear)
+                }
+                .onChange(of: selections) { value in
+                    updateSelectedDate(with: value)
+                }
+        }
+    }
+
+    private func getMonths(for year: Int) -> [String] {
+        let isStartYear = year == calendar.component(.year, from: closeRange.lowerBound)
+        let isEndYear = year == calendar.component(.year, from: closeRange.upperBound)
+
+        if isStartYear {
+            let firstMonth = calendar.component(.month, from: closeRange.lowerBound)
+            return Array(calendar.monthSymbols.dropFirst(firstMonth - 1))
+        } else if isEndYear {
+            let lastMonth = calendar.component(.month, from: closeRange.upperBound)
+            return Array(calendar.monthSymbols.prefix(lastMonth))
+        } else {
+            return calendar.monthSymbols
+        }
+    }
+
     func updateSelectedDate(with selections: [Int]) {
         var components = DateComponents()
-        
-        let yearIndex = selections[0]
-        let monthIndex = selections[1]
-        let dayIndex = calendar.component(.day, from: selectedDate)
+        components.year = years[selections[0]]
+        components.month = selections[1] + 1
+        components.day = calendar.component(.day, from: selectedDate)
 
-        components.year = years[yearIndex]
-        components.month = monthIndex + 1
-
-        let newDate = calendar.date(from: components)
-
-        let newMonthRange = calendar.range(of: .day, in: .month, for: newDate!)
-
-        // If the selected day does exist in the new month, it will be the default day of the month
-        if dayIndex <= newMonthRange!.count {
-            components.day = dayIndex
-        } else {
-            // If the selected day doesn't exist in the new month, default will move to the first day of the month
-            components.day = 1
-        }
-        
-        if let updatedDate = calendar.date(from: components) {
+        if let updatedDate = calendar.date(from: components), closeRange.contains(updatedDate) {
             selectedDate = updatedDate
-        } else {
-            print("Failed to create date")
         }
     }
 }
 
+
+
 #Preview {
-    SelectMonthPickerView(selectedDate: .constant(Date()), calendar: Calendar.current, calenderType: .gregorian)
+    SelectMonthPickerView(selectedDate: .constant(Date()), calendar: Calendar.current, calenderType: .gregorian, closeRange: Date()...Date())
 }
