@@ -24,21 +24,20 @@ internal struct SwipeView<Content: View>: View {
         self.content = content
         self.calendar = calendar
         self._selectedIndex = selectedIndex
-
+        
     }
-
+    
     var body: some View {
         Group {
             if isDisable == false {
                 TabView(selection: $selectedIndex) {
-                        content()
-                    
+                    content()
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .onAppear {
                     let selectedDate = calendar.startOfDay(for: Date())
                     print("selectedDate: \(selectedDate)")
-                    selectedIndex = findCurrentDateIndex(calendar: calendar, dateRange: dateRange, selectedDate: selectedDate)
+                    selectedIndex = calendar.findCurrentDateIndex(dateRange: dateRange, selectedDate: selectedDate)
                 }
                 .onChange(of: selectedIndex) { newValue in
                     displayedMonth = dateRange[newValue]
@@ -48,6 +47,6 @@ internal struct SwipeView<Content: View>: View {
             }
         }
     }
-
+    
 }
 

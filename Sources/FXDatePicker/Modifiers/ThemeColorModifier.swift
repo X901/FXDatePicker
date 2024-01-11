@@ -9,9 +9,9 @@
 import SwiftUI
 
 @available(iOS 14.0, *)
- public struct DatePickerThemeKey: EnvironmentKey {
+public struct DatePickerThemeKey: EnvironmentKey {
     public static var defaultValue: DatePickerTheme = DatePickerTheme()
-
+    
 }
 
 public extension EnvironmentValues {

@@ -17,7 +17,7 @@ public extension View {
                 self.font(Font.body.bold())
             }
         } else {
-             self
+            self
         }
     }
 }

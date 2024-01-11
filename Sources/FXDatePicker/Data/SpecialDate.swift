@@ -27,7 +27,7 @@ public enum SpecialDateType {
 public struct ImageType {
     var imageName: String
     
-   public init(imageName: String) {
+    public init(imageName: String) {
         self.imageName = imageName
     }
 }
@@ -36,7 +36,7 @@ public struct SFSymbolsType {
     var imageName: String
     var color: Color
     
-   public init(imageName: String, color: Color) {
+    public init(imageName: String, color: Color) {
         self.imageName = imageName
         self.color = color
     }

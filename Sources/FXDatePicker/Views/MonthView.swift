@@ -21,13 +21,6 @@ internal struct MonthView: View {
     let hideMarkers: Bool
     let closeRange: ClosedRange<Date>
     
-    private var totalCells: Int { 6 * 7 } // 6 rows, 7 columns
-
-    
-    private var firstDayOfMonth: Date {
-        calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) ?? Date()
-    }
-    
     private var firstDayOfWeekInMonth: Int {
         guard let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) else {
             return 0
@@ -53,21 +46,21 @@ internal struct MonthView: View {
     
     private let totalMonthViewHeight: CGFloat = 300
     private let maxRows: Int = 6
-
+    
     
     internal var body: some View {
         let rowHeight: CGFloat = (hideMarkers == false) ? 50 : 45
         let totalRowHeight = CGFloat(numberOfRows) * rowHeight
         let totalPaddingHeight = totalMonthViewHeight - totalRowHeight
         let paddingPerRow = totalPaddingHeight / CGFloat(maxRows - 2)
-
-            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 7), spacing: paddingPerRow) {
-                ForEach(0..<(numberOfRows * 7), id: \.self) { index in
-                    gridCellView(at: index)
-                }
+        
+        LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 7), spacing: paddingPerRow) {
+            ForEach(0..<(numberOfRows * 7), id: \.self) { index in
+                gridCellView(at: index)
             }
-            .frame(height: totalMonthViewHeight)
-    }    
+        }
+        .frame(height: totalMonthViewHeight)
+    }
 }
 
 extension MonthView {
@@ -92,8 +85,8 @@ extension MonthView {
             Text("").frame(height: 50)
         }
     }
-
-        
+    
+    
     private func getDateFor(day: Int) -> Date {
         calendar.date(from: DateComponents(year: calendar.component(.year, from: displayedMonth), month: calendar.component(.month, from: displayedMonth), day: day))!
     }

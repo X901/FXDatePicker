@@ -13,7 +13,7 @@ struct ContentView: View {
     
     init() {
         // Change the app language to Arabic
-              UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
+//              UserDefaults.standard.set(["ar"], forKey: "AppleLanguages")
            }
         
     @State private var selectedGregorianDate = Date()
@@ -58,27 +58,27 @@ struct ContentView: View {
         
         VStack {
             
-//            Picker("", selection: $selectedCalender) {
-//                Text("Gregorian").tag(0)
-//                Text("Hijri").tag(1)
-//            }
-//            .pickerStyle(.segmented)
-//            .onChange(of: selectedCalender) { value in
-//                if value == 0 {
-//                    calenderType = .gregorian
-//                } else {
-//                    calenderType = .hijri(.islamicUmmAlQura)
-//                }
-//            }
+            Picker("", selection: $selectedCalender) {
+                Text("Gregorian").tag(0)
+                Text("Hijri").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .onChange(of: selectedCalender) { value in
+                if value == 0 {
+                    calenderType = .gregorian
+                } else {
+                    calenderType = .hijri(.islamicUmmAlQura)
+                }
+            }
 
             switch calenderType {
             case .gregorian:
-//                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates)
-                
-                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: cloaseRange)
+//                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: cloaseRange)
+
+                FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: Date()...)
                   // .hideMarkers()
                   // .hideDatePicker()
-//                   .disableSwipe()
+                 // .disableSwipe()
                     .calenderType(calenderType)
                     .datePickerTheme(main:
                         .init(

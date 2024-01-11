@@ -24,9 +24,9 @@ internal struct DayView: View {
     @Environment(\.datePickerTheme) private var theme
     
     private var isInRange: Bool {
-          guard let date = date else { return false }
-          return closeRange.contains(date)
-      }
+        guard let date = date else { return false }
+        return closeRange.contains(date)
+    }
     
     internal var body: some View {
         VStack(spacing: 0) {
@@ -45,11 +45,11 @@ internal struct DayView: View {
             if !hideMarkers {
                 ZStack {
                     
-                        if let specialDate = specialDate {
-                            specialDateImage(specialDate)
-                                .frame(height: imageSize)
-                                .padding(.vertical, 10)
-                        }
+                    if let specialDate = specialDate {
+                        specialDateImage(specialDate)
+                            .frame(height: imageSize)
+                            .padding(.vertical, 10)
+                    }
                     
                     
                 }
@@ -78,16 +78,6 @@ extension DayView {
         }
     }
     
-//    private func calculateTextColor() -> Color {
-//           if !isInRange {
-//               return Color.gray
-//           } else if isSelected {
-//               return isToday ? .white : theme.main.accentColor
-//           } else {
-//               return isBeforeToday ? theme.main.previousDaysNumber : (isToday ? theme.main.accentColor : theme.main.daysNumbers)
-//           }
-//       }
-    
     private func calculateTextColor() -> Color {
         if !isInRange {
             // Gray out the day if it's not in range
@@ -103,7 +93,7 @@ extension DayView {
             return theme.main.daysNumbers
         }
     }
-
+    
     
     private var dayFormatter: DateFormatter {
         let formatter = DateFormatter()
