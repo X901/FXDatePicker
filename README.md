@@ -51,6 +51,10 @@ FXDatePickerView(selectedDate: $selectedDate)
 ```
 
 ### Range
+
+![range](https://github.com/X901/FXDatePicker/assets/16876982/d2948ef8-7a13-493e-92d7-4847dccdc8a9)
+
+
 `FXDatePicker` also supports selecting dates within specified ranges. This can be particularly useful for applications where you need to restrict date selection to a certain period. Below are examples of how to use `FXDatePicker` with different types of date ranges.
 
 
