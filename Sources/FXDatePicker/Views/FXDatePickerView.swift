@@ -22,12 +22,11 @@ public struct FXDatePickerView: View {
     private var hideDatePicker: Bool = false
     
     @State private var dateRange: [Date] = []
-    
-    @State private var shouldUpdateView: Bool = false
-    
+        
     @State private var openShowSelectedMonths: Bool = false
     
     @State private var arrowRotation: Double = 0
+    @State private var selectedIndex: Int = 0
     
     var closeRange: ClosedRange<Date> = Date()...Date()
     
@@ -39,6 +38,7 @@ public struct FXDatePickerView: View {
         switch calenderType {
         case .gregorian:
             var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = .current
             calendar.locale = Locale(identifier: Locale.preferredLanguages.first ?? "ar")
             return calendar
             
@@ -61,23 +61,26 @@ public struct FXDatePickerView: View {
     }
     
     private var canMoveToPreviousMonth: Bool {
-        guard let minDate = dateRange.first else { return false }
-        return calendar.date(byAdding: .month, value: -1, to: displayedMonth) ?? Date() >= minDate
+        guard let previousMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth) else { return false }
+        return previousMonth >= closeRange.lowerBound
     }
-    
+
     private var canMoveToNextMonth: Bool {
-        guard let maxDate = dateRange.last else { return false }
-        return calendar.date(byAdding: .month, value: 1, to: displayedMonth) ?? Date() <= maxDate
+        guard let nextMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth) else { return false }
+        return nextMonth <= closeRange.upperBound
     }
-    
+
     // MARK:- with specialDates
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate]) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
         
-        self.closeRange = Date.distantPast...Date.distantFuture
-        
-        self.displayedMonth = closeRange.lowerBound
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = start...end
+
+        self._displayedMonth = State(initialValue: Date())
     }
     
     
@@ -86,29 +89,30 @@ public struct FXDatePickerView: View {
         self.specialDates = specialDates
         self.closeRange = closeReange
         
-        self.displayedMonth = closeRange.lowerBound
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
     }
     
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate], in range: PartialRangeFrom<Date>) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
         
-        let end = calendar.date(byAdding: .year, value: 100, to: Date()) ?? Date()
+        let startOfToday = calendar.startOfDay(for: Date())
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
 
-        self.closeRange = range.lowerBound...end
+        self.closeRange = startOfToday...end
         
-        self.displayedMonth = closeRange.lowerBound
+        self._displayedMonth = State(initialValue: startOfToday)
     }
     
     public init(selectedDate: Binding<Date>, specialDates: [SpecialDate], in range: PartialRangeThrough<Date>) {
         self._selectedDate = selectedDate
         self.specialDates = specialDates
         
-        let start = calendar.date(byAdding: .year, value: -100, to: Date()) ?? Date()
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
         
-        self.closeRange = start...range.upperBound
+        self.closeRange = start...range.upperBound + 1
         
-        self.displayedMonth = closeRange.upperBound
+        self._displayedMonth = State(initialValue: range.upperBound)
     }
     
     
@@ -117,12 +121,12 @@ public struct FXDatePickerView: View {
         self._selectedDate = selectedDate
         self.specialDates = []
         
-        let start = calendar.date(byAdding: .year, value: -100, to: Date()) ?? Date()
-        let end = calendar.date(byAdding: .year, value: 100, to: Date()) ?? Date()
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
 
         self.closeRange = start...end
         
-        self.displayedMonth = closeRange.lowerBound
+        self._displayedMonth = State(initialValue: Date())
         self.hideMarkers = true
     }
     
@@ -132,18 +136,19 @@ public struct FXDatePickerView: View {
         self.specialDates = []
         self.closeRange = closeReange
         
-        self.displayedMonth = closeRange.lowerBound
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
     }
     
     public init(selectedDate: Binding<Date>, in range: PartialRangeFrom<Date>) {
         self._selectedDate = selectedDate
         self.specialDates = []
         
-        let end = calendar.date(byAdding: .year, value: 100, to: Date()) ?? Date()
-  
-        self.closeRange = range.lowerBound...end
-        
-        self.displayedMonth = closeRange.lowerBound
+        let startOfToday = calendar.startOfDay(for: Date())
+        let end = calendar.date(byAdding: .year, value: 50, to: Date()) ?? Date()
+
+        self.closeRange = startOfToday...end
+
+        self._displayedMonth = State(initialValue: closeRange.lowerBound)
         self.hideMarkers = true
         
     }
@@ -152,15 +157,14 @@ public struct FXDatePickerView: View {
         self._selectedDate = selectedDate
         self.specialDates = []
         
-        let start = calendar.date(byAdding: .year, value: -100, to: Date()) ?? Date()
+        let start = calendar.date(byAdding: .year, value: -50, to: Date()) ?? Date()
 
-        self.closeRange = start...range.upperBound
+        self.closeRange = start...(range.upperBound + 1)
         
-        self.displayedMonth = closeRange.upperBound
+        self._displayedMonth = State(initialValue: closeRange.upperBound)
         self.hideMarkers = true
         
     }
-    
     
     
     public var body: some View {
@@ -207,34 +211,40 @@ public struct FXDatePickerView: View {
                     }
                 }
                 
-                SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, isDisable: disableSwipe) {
+                
+                SwipeView(dateRange: $dateRange, displayedMonth: $displayedMonth, selectedIndex: $selectedIndex, calendar: calendar, isDisable: disableSwipe) {
                     
                     if disableSwipe {
                         MonthView(displayedMonth: $displayedMonth,
                                   selectedDate: $selectedDate,
                                   specialDates: specialDates,
                                   calendar: calendar,
-                                  hideMarkers: hideMarkers)
+                                  hideMarkers: hideMarkers,
+                                  closeRange: closeRange)
                     } else {
-                        ForEach($dateRange, id: \.self) { $month in
-                            MonthView(displayedMonth: $month,
+                       // ForEach($dateRange, id: \.self) { $month in
+                            ForEach(0..<dateRange.count, id: \.self) { index in
+                            MonthView(displayedMonth: $dateRange[index],
                                       selectedDate: $selectedDate,
                                       specialDates: specialDates,
                                       calendar: calendar,
-                                      hideMarkers: hideMarkers)
-                            .tag(month)
+                                      hideMarkers: hideMarkers,
+                                      closeRange: closeRange)
+                                .tag(index)
+                                .id(index)
+
                         }
                     }
                     
                 }
-                .id(shouldUpdateView)
                 .frame(height: openShowSelectedMonths != true ? (hideMarkers ? 280 : 320) : (hideMarkers ? 300 : 340))
                 .overlay(
                     
                     openShowSelectedMonths ? SelectMonthPickerView(selectedDate: $selectedDate, calendar: calendar, calenderType: calenderType, closeRange: closeRange)
                         .onChange(of: selectedDate, perform: { value in
+                            selectedIndex = FXDatePicker.findCurrentDateIndex(calendar: calendar, dateRange: dateRange, selectedDate: value)
+
                             displayedMonth = value
-                            setupCurrentDate()
                         })
                     
                     : nil
@@ -250,16 +260,16 @@ public struct FXDatePickerView: View {
         .onAppear {
             setupCurrentDate()
         }
-        .onChange(of: displayedMonth) { newMonth in
-            updateDateRangeIfNeeded(for: newMonth, limitDate: closeRange.upperBound)
-        }
-        
     }
     
+    private func findCurrentDateIndex(currentDate: Date) -> Int {
+           // Find the index of the current date
+           return dateRange.firstIndex(where: { calendar.isDate($0, equalTo: currentDate, toGranularity: .day) }) ?? (dateRange.count - 1)
+       }
 }
 
+//MARK:- Modifiers
 public extension FXDatePickerView {
-    
     func calenderType(_ calenderType: CalenderType = .gregorian) -> FXDatePickerView {
         var fxDatePicker = self
         fxDatePicker.calenderType = calenderType
@@ -283,48 +293,15 @@ public extension FXDatePickerView {
         fxDatePicker.hideDatePicker = hide
         return fxDatePicker
     }
+}
+
+//MARK:- Healper Functions
+public extension FXDatePickerView {
     
     private func setupCurrentDate() {
-        //displayedMonth = closeRange.lowerBound
-        dateRange = generateMonths(start: displayedMonth, end: closeRange.upperBound)
+        dateRange = generateMonths(start: closeRange.lowerBound, end: closeRange.upperBound)
     }
-    
-    private func updateDateRangeIfNeeded(for month: Date, limitDate: Date) {
-        let monthStart = month
-        
-        let lastMonth = closeRange.upperBound
-        
-        // Extend the end of the range but not beyond the limitDate
-        if monthStart > calendar.date(byAdding: .month, value: -6, to: lastMonth) ?? Date(),
-           limitDate > lastMonth {
-            
-            let newEnd = min(calendar.date(byAdding: .month, value: 6, to: lastMonth) ?? Date(), limitDate)
-            extendDateRange(from: lastMonth, to: newEnd)
-        }
-        
-        let firstMonth = closeRange.lowerBound
-        
-        // Extend the start of the range but not beyond the limitDate
-        if monthStart < calendar.date(byAdding: .month, value: 6, to: firstMonth) ?? Date(),
-           limitDate < firstMonth {
-            
-            let newStart = max(calendar.date(byAdding: .month, value: -6, to: firstMonth) ?? Date(), limitDate)
-            extendDateRange(from: newStart, to: firstMonth, atStart: true)
-        }
-    }
-    
-    private func extendDateRange(from start: Date, to end: Date, atStart: Bool = false) {
-        let newMonths = generateMonths(start: start, end: end).filter { !dateRange.contains($0) }
-        if atStart {
-            dateRange.insert(contentsOf: newMonths, at: 0)
-        } else {
-            dateRange.append(contentsOf: newMonths)
-        }
-        dateRange = Array(Set(dateRange)).sorted()
-        print("Extended date range. New range: \(dateRange)")
-    }
-    
-    
+
     private func generateMonths(start: Date, end: Date) -> [Date] {
         var months: [Date] = []
         var currentDate = start
@@ -336,31 +313,21 @@ public extension FXDatePickerView {
         
         return months
     }
-    
-    
+
     func changeMonth(by increment: Int) {
-        guard let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth) else {
+        guard let newMonth = calendar.date(byAdding: .month, value: increment, to: displayedMonth),
+              let newMonthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: newMonth)) else {
             print("Failed to calculate new month")
             return
         }
         
-        // Assuming dateRange is sorted, get the minimum and maximum dates
-        guard let minDate = dateRange.first, let maxDate = dateRange.last else {
-            print("Date range is empty")
-            return
-        }
-        
-        // Check if the newMonth is within the dateRange
-        if newMonth >= minDate && newMonth <= maxDate {
+        if closeRange.contains(newMonthStart) {
             displayedMonth = newMonth
-            
         } else {
-            print("New month is outside the date range")
+            print("New month is outside the close range")
         }
     }
-    
-    
-    
+
     private func getMonthName(from date: Date) -> String {
         let formatter = monthFormatter
         return formatter.string(from: date)

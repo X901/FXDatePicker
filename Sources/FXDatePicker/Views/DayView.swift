@@ -11,32 +11,35 @@ import SwiftUI
 @available(iOS 14.0, *)
 internal struct DayView: View {
     let date: Date?
+    let closeRange: ClosedRange<Date>
     let isSelected: Bool
     let isBeforeToday: Bool
     let isToday: Bool
     let specialDate: SpecialDate?
     let hideMarkers: Bool
-
+    
     private let imageSize: CGFloat = 25
     let calendar: Calendar
     
     @Environment(\.datePickerTheme) private var theme
     
+    private var isInRange: Bool {
+          guard let date = date else { return false }
+          return closeRange.contains(date)
+      }
+    
     internal var body: some View {
         VStack(spacing: 0) {
             if let date = date {
                 Text(dayFormatter.string(from: date))
-                    .foregroundColor(isSelected ? 
-                                     (isToday ? .white : theme.main.accentColor) :
-                                     (isBeforeToday ? theme.main.previousDaysNumber :
-                                     (isToday ? theme.main.accentColor : theme.main.daysNumbers)
-                                     ))
+                    .foregroundColor(calculateTextColor())
                     .font(.system(size: 20))
                     .toBold(isSelected || isToday)
                     .frame(width: 30, height: 30)
                     .padding(.horizontal, 8)
                     .background(isSelected ? isToday ? theme.main.accentColor : theme.main.accentColor.opacity(0.2) : Color.clear)
                     .cornerRadius(20)
+                    .allowsHitTesting(isInRange)
             }
             
             if !hideMarkers {
@@ -75,6 +78,32 @@ extension DayView {
         }
     }
     
+//    private func calculateTextColor() -> Color {
+//           if !isInRange {
+//               return Color.gray
+//           } else if isSelected {
+//               return isToday ? .white : theme.main.accentColor
+//           } else {
+//               return isBeforeToday ? theme.main.previousDaysNumber : (isToday ? theme.main.accentColor : theme.main.daysNumbers)
+//           }
+//       }
+    
+    private func calculateTextColor() -> Color {
+        if !isInRange {
+            // Gray out the day if it's not in range
+            return Color.gray
+        } else if isSelected {
+            // Selected day color
+            return isToday ? .white : theme.main.accentColor
+        } else if isToday {
+            // Today's color if not selected
+            return theme.main.accentColor
+        } else {
+            // Normal day color
+            return theme.main.daysNumbers
+        }
+    }
+
     
     private var dayFormatter: DateFormatter {
         let formatter = DateFormatter()
