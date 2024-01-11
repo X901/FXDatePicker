@@ -31,7 +31,7 @@ Create a `Date` variable in your Swift file to save the date selection from the 
 Create an array of specialDates if you want to display images on specific dates. This step is optional. If you prefer a standard calendar without special dates, you can skip this.
 
 ```swift
-let specialDates: [Date: UIImage] = [
+let specialDates: [SpecialDate] = [
     // Your special dates and images here
 ]
 ```
