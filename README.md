@@ -19,12 +19,77 @@
 * **Flexibility**: FXDatePicker is ideal for creating distinctive, engaging date-picking experiences. The iOS DatePicker is more suited for applications that require basic date selection.
 
 # Usage
-1. Add a binding `Date` variable to save the selection.
-2. Create a `specialDates` array to add images below dates.
-3. Initialize FXDatePicker and present it as desired.
+
+### Step 1: Add a Binding `Date` Variable
+Create a `Date` variable in your Swift file to save the date selection from the picker.
+
+```swift
+@State private var selectedDate: Date = Date()
+```
+
+### Step 2: Configure specialDates (Optional)
+Create an array of specialDates if you want to display images on specific dates. This step is optional. If you prefer a standard calendar without special dates, you can skip this.
+
+```swift
+let specialDates: [Date: UIImage] = [
+    // Your special dates and images here
+]
+```
+
+### Step 3: Initialize FXDatePicker
+Add the FXDatePicker to your view. You can use it with or without specialDates.
+
+Example using specialDates:
 
 ```swift
 FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates)
+```
+
+Example without specialDates:
+```swift
+FXDatePickerView(selectedDate: $selectedDate)
+```
+
+### Range
+`FXDatePicker` also supports selecting dates within specified ranges. This can be particularly useful for applications where you need to restrict date selection to a certain period. Below are examples of how to use `FXDatePicker` with different types of date ranges.
+
+
+#### Using ClosedRange
+To use a closed range (a range with both a start and an end date), first create a `ClosedRange<Date>` variable. For example, to create a range for the current month:
+
+
+```swift
+private var closeRange: ClosedRange<Date> {
+    let calendar = Calendar.current
+    let startOfToday = calendar.startOfDay(for: Date())
+
+    guard let endOfRange = calendar.date(bySetting: .day, value: 18, of: startOfToday) else {
+        fatalError("Could not create start or end date for range")
+    }
+
+    return startOfToday...endOfRange
+}
+```
+
+Then, initialize `FXDatePicker` with this range:
+
+
+```swift
+FXDatePickerView(selectedDate: $selectedDate, specialDates: specialDates, in: cloaseRange)
+```
+
+#### Using PartialRangeFrom
+For a range starting from a specific date and extending indefinitely into the future:
+
+```swift
+FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: Date()...)
+```
+
+### Using PartialRangeThrough
+For a range that starts at any time in the past and ends at a specific date:
+
+```swift
+FXDatePickerView(selectedDate: $selectedGregorianDate, specialDates: specialDates, in: ...Date())
 ```
 
 ## Using `specialDates` to Add Custom Markers
